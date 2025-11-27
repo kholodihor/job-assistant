@@ -1,0 +1,575 @@
+{
+  "actions": {
+    "edit": "Edit",
+    "delete": "Delete",
+    "downloadPdf": "Download PDF",
+    "duplicate": "Duplicate",
+    "create": "Create",
+    "cancel": "Cancel",
+    "save": "Save"
+  },
+  "lastUpdated": "Last updated",
+  "HomePage": {
+    "title": "Hello world!",
+    "coverLetter": {
+      "title": "Create your cover letter",
+      "description": "83% of HR professionals say that cover letters are important for their hiring decisions. Our AI-powered cover letter generator will create a personalized cover letter for you with just one click.",
+      "button": "Create cover letter"
+    },
+    "steps": {
+      "title": "Create your resume in 4 easy steps",
+      "button": "Create resume",
+      "step1": {
+        "step": "Step 1",
+        "title": "Choose template",
+        "description": "Choose a resume template or upload an existing one"
+      },
+      "step2": {
+        "step": "Step 2",
+        "title": "Add content",
+        "description": "Fill in the template with just a few clicks"
+      },
+      "step3": {
+        "step": "Step 3",
+        "title": "Customize it",
+        "description": "Choose colors and fonts using a convenient interface"
+      },
+      "step4": {
+        "step": "Step 4",
+        "title": "Save file",
+        "description": "Download your enhanced resume in PDF format"
+      }
+    },
+    "optimization": {
+      "title": "Resume Optimization",
+      "description": "Find out what skills you're missing. The AI-based system will show you how to adapt your resume to highlight the skills and experience recruiters are looking for."
+    },
+    "hero": {
+      "title": "Professional Resume Builder",
+      "description": "Create an impressive resume in minutes. Utilize the power of artificial intelligence and data analysis.",
+      "button": "Create Resume",
+      "features": {
+        "feature1": "Optimization for filtering algorithms",
+        "feature2": "The best path to a new job"
+      },
+      "images": {
+        "ellipse": "Ellipse",
+        "ellipseInlying": "Ellipse inlying",
+        "cv": "CV",
+        "typography": "Typography",
+        "ats": "ATS",
+        "ai": "AI",
+        "aiLogo": "AI Logo",
+        "colors": "Colors"
+      }
+    }
+  },
+  "Auth": {
+    "errors": {
+      "oauthAccountNotLinked": "This email is already associated with another provider. Please sign in using the appropriate provider.",
+      "emailExists": "This email is already registered with a password. Please sign in using your email and password.",
+      "default": "An error occurred during authentication. Please try again.",
+      "useCredentials": "Please use email and password to sign in with {email}",
+      "credentialsSignin": "Invalid email or password",
+      "userNotFound": "User not found",
+      "invalidCredentials": "Invalid email or password"
+    }
+  },
+  "404Page": {
+    "homePage": "/en",
+    "text": "404",
+    "desc": "It seems we can't find the page you're looking for. Return to homepage.",
+    "buttonText": "Go to Homepage"
+  },
+  "resume": {
+    "lastUpdated": "Last updated",
+    "copy": "copy",
+    "loading": "Loading resumes...",
+    "actions": {
+      "create": "Create Resume",
+      "downloadPdf": "Download PDF",
+      "duplicate": "Duplicate",
+      "delete": "Delete",
+      "cancel": "Cancel",
+      "save": "Save"
+    },
+    "delete": {
+      "title": "Delete Resume",
+      "description": "Are you sure you want to delete this resume? This action cannot be undone.",
+      "confirm": "Delete",
+      "deleting": "Deleting..."
+    },
+    "messages": {
+      "deleteSuccess": "Resume deleted successfully",
+      "saveTitleSuccess": "Resume title updated successfully",
+      "duplicateCreated": "Resume duplicated successfully",
+      "duplicateDeleted": "Duplicate resume deleted successfully",
+      "resumeDeleted": "Resume deleted successfully"
+    },
+    "errors": {
+      "loadFailed": "Failed to load resumes",
+      "deleteFailed": "Failed to delete resume",
+      "saveTitleFailed": "Failed to update resume title"
+    }
+  },
+  "Form": {
+    "validation": {
+      "required": "This field is required",
+      "titleRequired": "Title is required",
+      "templateRequired": "Please select a template",
+      "nameMinLength": "Name should be at least 2 symbols",
+      "nameRequired": "Name is required",
+      "emailRequired": "Please enter a valid email address",
+      "passwordMinLength": "Password must be at least 8 characters",
+      "passwordNumber": "Password must contain at least one number",
+      "passwordLatin": "Password must contain at least one Latin letter",
+      "passwordsMatch": "Passwords don't match",
+      "termsAccepted": "You must accept Terms of Service and Privacy Policy",
+      "professionRequired": "Profession is required",
+      "photoRequired": "Photo is required",
+      "locationRequired": "Location is required",
+      "phoneRequired": "Phone is required",
+      "invalidEmail": "Invalid email address",
+      "invalidUrl": "Invalid URL address",
+      "positionRequired": "Position is required",
+      "companyRequired": "Company is required",
+      "startDateRequired": "Start date is required",
+      "endDateRequired": "End date is required",
+      "descriptionRequired": "Description is required",
+      "languageNameRequired": "Language name is required",
+      "languageLevelRequired": "Language level is required",
+      "yearsRequired": "Years of experience is required"
+    },
+    "descriptions": {
+      "skills": "Separate each skill with a comma",
+      "workExperience": "List your work experience in chronological order",
+      "education": "List your educational background in chronological order",
+      "languages": "Add languages you know and your proficiency level",
+      "techStack": "Separate technologies with commas"
+    },
+    "navigation": {
+      "previousStep": "Previous Step",
+      "nextStep": "Next Step",
+      "togglePreview": "Toggle Preview",
+      "saving": "Saving...",
+      "save": "Save",
+      "saveResume": "Save Resume"
+    },
+    "steps": {
+      "generalInfo": {
+        "title": "General Info",
+        "description": "This information will be displayed on your resume."
+      },
+      "personalInfo": {
+        "title": "Personal Info",
+        "description": "Fill in your personal information"
+      },
+      "workExperience": {
+        "title": "Work Experience",
+        "description": "Add your work experience"
+      },
+      "education": {
+        "title": "Education",
+        "description": "Add your educational background"
+      },
+      "skills": {
+        "title": "Skills",
+        "description": "List your professional skills"
+      },
+      "languages": {
+        "title": "Languages",
+        "description": "Add languages you know"
+      },
+      "summary": {
+        "title": "Summary",
+        "description": "Write a brief professional summary"
+      },
+      "interview": {
+        "title": "Interview Setup",
+        "description": "Set up your interview parameters"
+      }
+    },
+    "labels": {
+      "name": "Full Name",
+      "profession": "Profession",
+      "photo": "Photo",
+      "location": "Location",
+      "phone": "Phone",
+      "email": "Email",
+      "telegram": "Telegram (Optional)",
+      "github": "GitHub (Optional)",
+      "behance": "Behance (Optional)",
+      "dribbble": "Dribbble (Optional)",
+      "adobePortfolio": "Adobe Portfolio (Optional)",
+      "linkedin": "LinkedIn (Optional)",
+      "position": "Position",
+      "company": "Company",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "description": "Description",
+      "workExperience": "Work Experience",
+      "education": "Education",
+      "skills": "Skills",
+      "languageName": "Language",
+      "languageLevel": "Level",
+      "degree": "Degree",
+      "institution": "Institution",
+      "techStack": "Tech Stack",
+      "yearsOfExperience": "Years of Experience"
+    },
+    "placeholders": {
+      "name": "John Doe",
+      "profession": "Software Engineer",
+      "location": "New York, USA",
+      "phone": "+1 234 567 8900",
+      "email": "john@example.com",
+      "telegram": "https://t.me/username",
+      "github": "https://github.com/username",
+      "behance": "https://behance.net/username",
+      "dribbble": "https://dribbble.com/username",
+      "adobePortfolio": "https://portfolio.adobe.com/username",
+      "linkedin": "https://www.linkedin.com/in/username",
+      "position": "Senior Software Engineer",
+      "company": "Google, Amazon etc...",
+      "description": "Describe your responsibilities and achievements",
+      "startDate": "Select start date",
+      "endDate": "Select end date or leave empty if current",
+      "skills": "e.g. React.js, Node.js, graphic design, ...",
+      "languageLevel": "Select proficiency level",
+      "degree": "Bachelor's degree",
+      "institution": "University of New York",
+      "summary": "Write a brief summary of your professional background and goals",
+      "techStack": "e.g. React, TypeScript, Node.js",
+      "yearsOfExperience": "e.g. 3"
+    },
+    "workExperience": {
+      "endDateDescription": "Leave end date empty if you are currently working here",
+      "add": "Add work experience",
+      "remove": "Remove",
+      "drag": "Drag to reorder"
+    },
+    "education": {
+      "add": "Add education",
+      "remove": "Remove",
+      "drag": "Drag to reorder"
+    },
+    "languages": {
+      "add": "Add language",
+      "remove": "Remove",
+      "drag": "Drag to reorder"
+    },
+    "skills": {
+      "add": "Add skill",
+      "remove": "Remove",
+      "drag": "Drag to reorder"
+    },
+    "summary": {
+      "generate": "Generate with AI",
+      "generating": "Generating...",
+      "success": "Success",
+      "successMessage": "Summary generated successfully!",
+      "error": "Error",
+      "errorMessage": "Failed to generate summary. Please try again."
+    },
+    "buttons": {
+      "cancel": "Cancel",
+      "startInterview": "Start Interview"
+    }
+  },
+  "Header": {
+    "accountButton": {
+      "myAccount": "My Account",
+      "userIcon": "User"
+    },
+    "profileInfo": {
+      "account": "Account",
+      "exit": "Exit",
+      "accountIcon": "Account",
+      "exitIcon": "Exit"
+    },
+    "menu": {
+      "links": {
+        "resume": "Resume",
+        "coverLetter": "Cover Letter",
+        "myProfile": "My Profile"
+      },
+      "account": "Account",
+      "exit": "Exit"
+    }
+  },
+  "SharedHeader": {
+    "links": {
+      "resume": "Resume",
+      "coverLetter": "Cover Letter"
+    },
+    "images": {
+      "logo": "Logo",
+      "hamburger": "Menu"
+    }
+  },
+  "ResumePage": {
+    "title": "My Resumes",
+    "create": "Create Resume",
+    "copy": "Copy",
+    "preview": "Preview",
+    "close": "Close"
+  },
+  "Footer": {
+    "logo": {
+      "alt": "Big Logo"
+    },
+    "contacts": {
+      "title": "CONTACTS",
+      "email": "info@baza-trainee.tech"
+    },
+    "createWithAi": {
+      "title": "CREATE WITH AI",
+      "links": {
+        "resume": "Resume",
+        "coverLetter": "Cover Letter"
+      }
+    },
+    "help": {
+      "title": "HELP",
+      "links": {
+        "bazaSkill": "Baza Skill",
+        "jobTracker": "Job Tracker"
+      }
+    },
+    "socials": {
+      "title": "FIND US",
+      "icons": {
+        "facebook": "Facebook icon",
+        "telegram": "Telegram icon",
+        "linkedin": "LinkedIn icon"
+      }
+    },
+    "copyright": "Baza Trainee Ukraine 2024 \u00A9 All rights reserved"
+  },
+  "Settings": {
+    "changeName": {
+      "message": "Name was successfully update",
+      "error": "Some issue happened due changing name"
+    },
+    "changePassword": {
+      "message": "Password was successfully changed",
+      "error": "Some issue happened due changing password"
+    }
+  },
+  "CoverLetterPage": {
+    "title": "Cover letters",
+    "create": "Create cover letter",
+    "copy": "Copy",
+    "preview": "Preview",
+    "close": "Close"
+  },
+  "letter": {
+    "lastUpdated": "Last updated",
+    "copy": "copy",
+    "loading": "Loading resumes...",
+    "actions": {
+      "create": "Create Cover Letter",
+      "downloadPdf": "Download PDF",
+      "duplicate": "Duplicate",
+      "delete": "Delete",
+      "cancel": "Cancel",
+      "save": "Save"
+    },
+    "delete": {
+      "title": "Delete Cover Letter",
+      "description": "Are you sure you want to delete this letter? This action cannot be undone.",
+      "confirm": "Delete",
+      "deleting": "Deleting..."
+    },
+    "messages": {
+      "deleteSuccess": "Cover letter deleted successfully",
+      "saveTitleSuccess": "Cover letter title updated successfully",
+      "duplicateCreated": "Cover letter duplicated successfully",
+      "duplicateDeleted": "Duplicate cover letter deleted successfully",
+      "resumeDeleted": "Cover letter deleted successfully"
+    },
+    "errors": {
+      "loadFailed": "Failed to load resumes",
+      "deleteFailed": "Failed to delete letter",
+      "saveTitleFailed": "Failed to update letter title"
+    }
+  },
+  "Interviewer": {
+    "title": "AI Interview Generator",
+    "createButton": "Create New Interview",
+    "regenerateButton": "Regenerate",
+    "expandButton": "Expand",
+    "collapseButton": "Collapse",
+    "deleteButton": "Delete",
+    "cancelButton": "Cancel",
+    "deleteConfirmTitle": "Delete Interview",
+    "deleteConfirmDescription": "Are you sure you want to delete this interview? This action cannot be undone.",
+    "deletingMessage": "Deleting...",
+    "expandMessage": "Click \"Expand\" to view questions and answers.",
+    "failedMessage": "Failed to generate questions. Please try again.",
+    "generatingMessage": "Generating interview questions...",
+    "generatingQuestionsMessage": "Generating interview questions...",
+    "loadingMessage": "Loading interviews...",
+    "noInterviewsMessage": "No interviews created yet.",
+    "getStartedMessage": "Click the \"Create New Interview\" button to get started.",
+    "rawResponseLabel": "Raw AI Response:",
+    "yearsExp": "years exp.",
+    "liveInterview": {
+      "title": "Live Interview Session",
+      "position": "Position",
+      "experience": "Experience",
+      "techStack": "Tech Stack",
+      "interviewDetails": "Interview Details",
+      "enableWebcam": "Enable Webcam",
+      "enableCamera": "Enable Camera",
+      "disableCamera": "Disable Camera",
+      "startRecording": "Start Recording",
+      "stopRecording": "Stop Recording",
+      "micDisabled": "Enable camera to use microphone",
+      "cameraDisabled": "Camera is currently disabled",
+      "interviewChat": "Interview Chat",
+      "responsePrompt": "Type your response here...",
+      "interviewTip": "Tip: Speak clearly and maintain eye contact with the camera",
+      "endInterviewButton": "End Interview",
+      "previousQuestion": "Previous Question",
+      "nextQuestion": "Next Question",
+      "currentQuestion": "Current Question",
+      "clearAnswer": "Clear Answer",
+      "checkAnswer": "Check Answer",
+      "generatingFeedback": "Generating feedback...",
+      "feedbackReceived": "Feedback received",
+      "errorTitle": "Error",
+      "notFoundTitle": "Interview Not Found",
+      "notFoundDescription": "The requested interview could not be found.",
+      "returnButton": "Return to Interviews"
+    }
+  },
+  "FormLetter": {
+    "validation": {
+      "required": "This field is required",
+      "titleRequired": "Title is required",
+      "nameRequired": "Name is required",
+      "professionRequired": "Profession is required",
+      "positionRequired": "Position is required",
+      "companyRequired": "Company is required",
+      "locationRequired": "Location is required",
+      "phoneRequired": "Phone is required",
+      "invalidEmail": "Invalid email address",
+      "nameRecipientRequired": "Name of the Recipient is required",
+      "positionRecipientRequired": "Position of the Recipient is required",
+      "templateRequired": "Please select a template",
+      "invalidText": "Please enter a text of the Cover Letter",
+      "invalidUrl": "Invalid URL address"
+    },
+    "navigation": {
+      "previousStep": "Previous step",
+      "nextStep": "Next step",
+      "togglePreview": "Toggle preview",
+      "saving": "Saving...",
+      "save": "Save",
+      "saveLetter": "Save Letter"
+    },
+    "steps": {
+      "generalInfo": {
+        "title": "General Info",
+        "description": "This information will be displayed on your cover letter."
+      },
+      "personalInfo": {
+        "title": "Personal Info",
+        "description": "Fill in your personal information"
+      },
+      "workInfo": {
+        "title": "Work Info",
+        "description": "Fill in your work and recipient information"
+      },
+      "text": {
+        "title": "Text",
+        "description": "Write a text of your letter",
+        "counterStart": "Remaining: ",
+        "counterFinish": "characters"
+      }
+    },
+    "labels": {
+      "name": "Full Name",
+      "profession": "Profession",
+      "location": "Location",
+      "phone": "Phone",
+      "email": "Email",
+      "position": "Position",
+      "company": "Company",
+      "text": "Text",
+      "nameRecipient": "Name of the Recipient (optional)",
+      "positionRecipient": "Position of the Recipient"
+    },
+    "placeholders": {
+      "name": "John Doe",
+      "profession": "Software Engineer",
+      "location": "New York, USA",
+      "phone": "+1 234 567 8900",
+      "email": "john@example.com",
+      "position": "Senior Software Engineer",
+      "company": "Company XYZ",
+      "text": "Write a text of your cover letter",
+      "nameRecipient": "John Snow",
+      "positionRecipient": "IT recruiter",
+      "description": "Describe your motivation, strengths, and how you match the job requirements"
+    },
+    "text": {
+      "generate": "Generate with AI",
+      "generating": "Generating...",
+      "success": "Success",
+      "successMessage": "Text generated successfully!",
+      "error": "Error",
+      "errorMessage": "Failed to generate text. Please try again."
+    }
+  },
+  "cvAnalyzer": {
+    "title": "CV Analyzer",
+    "description": "Upload your CV and get AI-powered feedback to improve your chances of landing your dream job.",
+    "form": {
+      "companyName": "Company Name",
+      "companyPlaceholder": "Enter company name (optional)",
+      "jobTitle": "Job Title",
+      "jobTitlePlaceholder": "Enter the job title you're applying for",
+      "jobDescription": "Job Description",
+      "jobDescriptionPlaceholder": "Paste the job description here for more targeted feedback",
+      "uploadCV": "Upload Your CV",
+      "analyzeButton": "Analyze CV",
+      "fileUploaded": "File uploaded successfully! Click to change.",
+      "dropHere": "Drop your CV here...",
+      "dragDrop": "Drag & drop your CV here",
+      "clickBrowse": "or click to browse files",
+      "pdfOnly": "PDF files only, max 10MB",
+      "analyzing": "Analyzing CV...",
+      "optional": "(Optional)",
+      "required": "*"
+    },
+    "status": {
+      "extractingText": "Extracting text from PDF...",
+      "analyzing": "Analyzing your CV with AI...",
+      "complete": "Analysis complete!",
+      "pleaseWait": "This may take a few moments, please wait."
+    },
+    "results": {
+      "title": "Analysis Results",
+      "analyzeAnother": "Analyze Another CV",
+      "overallScore": "Overall Score",
+      "sections": {
+        "ats": "ATS Compatibility",
+        "content": "Content Quality",
+        "structure": "Structure & Format",
+        "skills": "Skills & Keywords",
+        "toneAndStyle": "Tone & Style"
+      }
+    },
+    "errors": {
+      "missingFields": "Please provide both a CV file and job title.",
+      "analysisFailed": "Failed to analyze CV. Please try again.",
+      "pdfOnly": "Please upload a PDF file only."
+    },
+    "success": {
+      "analysisComplete": "CV analysis completed successfully!",
+      "fileUploaded": "File uploaded successfully!"
+    }
+  }
+}

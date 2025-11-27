@@ -1,0 +1,11 @@
+services:
+  app:
+    image: cvbaza
+    env_file: .env
+    # environment:
+    #   DATABASE_URL: postgresql://${DB_USER}:${DB_PASSWORD}@postgres:${DB_PORT}/${DB_NAME}?schema=public
+    build: .
+    restart: always
+    ports:
+      - "${LOCAL_PORT}:${PORT}"
+    container_name: cvbaza-app

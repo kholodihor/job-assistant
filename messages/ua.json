@@ -1,0 +1,579 @@
+{
+  "actions": {
+    "edit": "Редагувати",
+    "delete": "Видалити",
+    "downloadPdf": "Завантажити PDF",
+    "duplicate": "Дублювати",
+    "create": "Створити",
+    "cancel": "Скасувати",
+    "save": "Зберегти"
+  },
+  "lastUpdated": "Останнє оновлення",
+  "HomePage": {
+    "title": "Привіт світ!",
+    "coverLetter": {
+      "title": "Створіть свій супровідний лист",
+      "description": "83% фахівців з кадрів кажуть, що супровідні листи є важливими для їх вирішення про наймання співробітника. Генератор супровідних листів на основі штучного інтелекту створить для вас персоналізований супровідний лист лише одним клацанням миші.",
+      "button": "Cтворити супровідний лист"
+    },
+    "optimization": {
+      "title": "Оптимізація резюме",
+      "description": "Дізнайтеся, яких навичок вам бракує. Система на базі штучного інтелекту покаже вам, як адаптувати своє резюме так, щоб підкреслити навички та досвід, які шукають рекрутери."
+    },
+    "hero": {
+      "title": "Професійний конструктор резюме",
+      "description": "Створіть вражаюче резюме за лічені хвилини. Використовуйте можливості штучного інтелекту та аналізу даних.",
+      "button": "Cтворити резюме",
+      "features": {
+        "feature1": "Оптимізація для алгоритмів фільтрації",
+        "feature2": "Найкращій шлях до нової роботи"
+      },
+      "images": {
+        "ellipse": "Еліпс",
+        "ellipseInlying": "Внутрішній еліпс",
+        "cv": "Резюме",
+        "typography": "Типографія",
+        "ats": "ATS",
+        "ai": "ШІ",
+        "aiLogo": "Логотип ШІ",
+        "colors": "Кольори"
+      }
+    },
+    "steps": {
+      "title": "Створіть своє резюме за 4 легкі кроки",
+      "button": "Створити резюме",
+      "step1": {
+        "step": "Крок 1",
+        "title": "Виберіть шаблон",
+        "description": "Виберіть шаблон резюме або завантажте існуюче"
+      },
+      "step2": {
+        "step": "Крок 2",
+        "title": "Додайте контент",
+        "description": "За допомогою декількох кліків заповніть шаблон"
+      },
+      "step3": {
+        "step": "Крок 3",
+        "title": "Адаптуйте під себе",
+        "description": "Оберіть кольори та шрифти за допомогою зручного інтерфейсу"
+      },
+      "step4": {
+        "step": "Крок 4",
+        "title": "Збережіть файл",
+        "description": "Завантажте своє покращене резюме у PDF форматі"
+      }
+    }
+  },
+  "404": {
+    "title": "404",
+    "desc": "Схоже, ми не зможемо знайти потрібну вам сторінку. Поверніться на головну.",
+    "buttonText": "На головну"
+  },
+  "Auth": {
+    "errors": {
+      "oauthAccountNotLinked": "Ця електронна пошта вже пов'язана з іншим провайдером. Будь ласка, увійдіть за допомогою відповідного провайдера.",
+      "emailExists": "Ця електронна пошта вже зареєстрована з паролем. Будь ласка, увійдіть використовуючи електронну пошту та пароль.",
+      "default": "Під час аутентифікації сталася помилка. Будь ласка, спробуйте ще раз.",
+      "useCredentials": "Будь ласка, використовуйте електронну пошту та пароль для входу з {email}",
+      "credentialsSignin": "Невірна електронна пошта або пароль",
+      "userNotFound": "Користувача не знайдено",
+      "invalidCredentials": "Невірна електронна пошта або пароль"
+    }
+  },
+  "404Page": {
+    "homePage": "/ua",
+    "text": "404",
+    "desc": "Схоже, ми не зможемо знайти потрібну вам сторінку. Поверніться на головну.",
+    "buttonText": "На головну"
+  },
+  "ResumePage": {
+    "title": "Мої резюме",
+    "create": "Створити резюме",
+    "copy": "Копіювати",
+    "preview": "Перегляд",
+    "close": "Закрити"
+  },
+  "resume": {
+    "lastUpdated": "Останнє оновлення",
+    "copy": "копія",
+    "loading": "Завантаження резюме...",
+    "actions": {
+      "create": "Створити резюме",
+      "downloadPdf": "Завантажити PDF",
+      "duplicate": "Дублювати",
+      "delete": "Видалити",
+      "edit": "Редагувати",
+      "cancel": "Скасувати",
+      "save": "Зберегти"
+    },
+    "delete": {
+      "title": "Видалити резюме",
+      "description": "Ви впевнені, що хочете видалити це резюме? Ця дія не може бути скасована.",
+      "confirm": "Видалити",
+      "deleting": "Видалення..."
+    },
+    "messages": {
+      "deleteSuccess": "Резюме успішно видалено",
+      "saveTitleSuccess": "Назву резюме успішно оновлено",
+      "duplicateCreated": "Копію резюме успішно створено"
+    },
+    "errors": {
+      "loadFailed": "Не вдалося завантажити резюме",
+      "deleteFailed": "Не вдалося видалити резюме",
+      "saveTitleFailed": "Не вдалося оновити назву резюме"
+    }
+  },
+  "Form": {
+    "validation": {
+      "required": "Це поле обов'язкове",
+      "titleRequired": "Назва обов'язкова",
+      "templateRequired": "Будь ласка, оберіть шаблон",
+      "nameMinLength": "Ім'я повинно мати не менше двох символів",
+      "nameRequired": "Ім'я обов'язкове",
+      "emailRequired": "Будь ласка, введіть дійсну електронну адресу",
+      "passwordMinLength": "Пароль повинен містити щонайменше 8 символів",
+      "passwordNumber": "Пароль повинен містити хоча б одну цифру",
+      "passwordLatin": "Пароль повинен містити хоча б одну латинську літеру",
+      "passwordsMatch": "Паролі не співпадають",
+      "termsAccepted": "Ви повинні прийняти Умови надання послуг та Політику конфіденційності",
+      "invalidEmail": "Невірна адреса електронної пошти",
+      "invalidUrl": "Невірна URL адреса",
+      "positionRequired": "Посада обов'язкова",
+      "companyRequired": "Компанія обов'язкова",
+      "startDateRequired": "Дата початку обов'язкова",
+      "endDateRequired": "Дата закінчення обов'язкова",
+      "descriptionRequired": "Опис обов'язковий",
+      "languageNameRequired": "Назва мови обов'язкова",
+      "languageLevelRequired": "Рівень володіння обов'язковий",
+      "yearsRequired": "Роки досвіду обов'язкові"
+    },
+    "steps": {
+      "generalInfo": {
+        "title": "Загальна інформація",
+        "description": "Ця інформація буде відображена у вашому резюме."
+      },
+      "personalInfo": {
+        "title": "Особиста інформація",
+        "description": "Заповніть вашу особисту інформацію"
+      },
+      "workExperience": {
+        "title": "Досвід роботи",
+        "description": "Додайте ваш досвід роботи"
+      },
+      "education": {
+        "title": "Освіта",
+        "description": "Додайте вашу освіту"
+      },
+      "skills": {
+        "title": "Навички",
+        "description": "Перелічіть ваші професійні навички"
+      },
+      "languages": {
+        "title": "Мови",
+        "description": "Додайте мови, якими ви володієте"
+      },
+      "summary": {
+        "title": "Резюме",
+        "description": "Напишіть коротке професійне резюме"
+      },
+      "interview": {
+        "title": "Налаштування співбесіди",
+        "description": "Налаштуйте параметри вашої співбесіди"
+      }
+    },
+    "labels": {
+      "name": "Повне ім'я",
+      "profession": "Професія",
+      "photo": "Фото",
+      "location": "Місцезнаходження",
+      "phone": "Телефон",
+      "email": "Електронна пошта",
+      "telegram": "Telegram (Необов'язково)",
+      "github": "GitHub (Необов'язково)",
+      "behance": "Behance (Необов'язково)",
+      "dribbble": "Dribbble (Необов'язково)",
+      "adobePortfolio": "Adobe Portfolio (Необов'язково)",
+      "linkedin": "LinkedIn (Необов'язково)",
+      "position": "Посада",
+      "company": "Компанія",
+      "startDate": "Дата початку",
+      "endDate": "Дата закінчення",
+      "description": "Опис",
+      "workExperience": "Досвід роботи",
+      "education": "Освіта",
+      "skills": "Навички",
+      "languageName": "Мова",
+      "languageLevel": "Рівень",
+      "degree": "Ступінь",
+      "institution": "Навчальний заклад",
+      "techStack": "Технічний стек",
+      "yearsOfExperience": "Роки досвіду"
+    },
+    "placeholders": {
+      "name": "Джон Доу",
+      "profession": "Інженер програмного забезпечення",
+      "location": "Київ, Україна",
+      "phone": "+380 XX XXX XXXX",
+      "email": "john@example.com",
+      "telegram": "https://t.me/username",
+      "github": "https://github.com/username",
+      "behance": "https://behance.net/username",
+      "dribbble": "https://dribbble.com/username",
+      "adobePortfolio": "https://portfolio.adobe.com/username",
+      "linkedin": "https://www.linkedin.com/in/username",
+      "position": "Старший інженер програмного забезпечення",
+      "company": "Google, Amazon etc...",
+      "description": "Опишіть ваші обов'язки та досягнення",
+      "startDate": "Січень 2020",
+      "endDate": "Теперішній час",
+      "skills": "напр. React.js, Node.js, графічний дизайн, ...",
+      "languageLevel": "Оберіть рівень володіння",
+      "degree": "Бакалавр комп'ютерних наук",
+      "institution": "Київський національний університет",
+      "techStack": "напр. React, TypeScript, Node.js",
+      "yearsOfExperience": "напр. 3"
+    },
+    "workExperience": {
+      "endDateDescription": "Залиште дату закінчення порожньою, якщо ви зараз тут працюєте",
+      "remove": "Видалити",
+      "add": "Додати досвід роботи"
+    },
+    "education": {
+      "add": "Додати освіту",
+      "remove": "Видалити"
+    },
+    "fields": {
+      "name": "Повне ім'я",
+      "profession": "Професія",
+      "photo": "Фото",
+      "location": "Місцезнаходження",
+      "phone": "Телефон",
+      "email": "Електронна пошта",
+      "telegram": "Telegram (Необов'язково)",
+      "github": "GitHub (Необов'язково)",
+      "behance": "Behance (Необов'язково)",
+      "dribbble": "Dribbble (Необов'язково)",
+      "adobePortfolio": "Adobe Portfolio (Необов'язково)",
+      "linkedin": "LinkedIn (Необов'язково)",
+      "position": "Посада",
+      "company": "Компанія",
+      "startDate": "Дата початку",
+      "endDate": "Дата закінчення",
+      "description": "Опис",
+      "workExperience": "Досвід роботи",
+      "degree": "Ступінь",
+      "institution": "Навчальний заклад"
+    },
+    "languages": {
+      "add": "Додати мову",
+      "remove": "Видалити"
+    },
+    "summary": {
+      "generate": "Згенерувати за допомогою ШІ",
+      "generating": "Генерація...",
+      "success": "Успішно",
+      "successMessage": "Резюме успішно згенеровано!",
+      "error": "Помилка",
+      "errorMessage": "Не вдалося згенерувати резюме. Будь ласка, спробуйте ще раз."
+    },
+    "navigation": {
+      "nextStep": "Наступний крок",
+      "previousStep": "Попередній крок",
+      "togglePreview": "Перемкнути перегляд",
+      "saving": "Збереження...",
+      "save": "Зберегти",
+      "saveResume": "Зберегти резюме"
+    },
+    "descriptions": {
+      "skills": "Розділіть кожну навичку комою.",
+      "techStack": "Розділіть технології комами"
+    },
+    "buttons": {
+      "cancel": "Скасувати",
+      "startInterview": "Почати співбесіду"
+    }
+  },
+  "Header": {
+    "accountButton": {
+      "myAccount": "Мій акаунт",
+      "userIcon": "Користувач"
+    },
+    "profileInfo": {
+      "account": "Аккаунт",
+      "exit": "Вийти",
+      "accountIcon": "Аккаунт",
+      "exitIcon": "Вийти"
+    },
+    "menu": {
+      "links": {
+        "resume": "Резюме",
+        "coverLetter": "Супровідний лист",
+        "myProfile": "Мій профіль"
+      },
+      "account": "Аккаунт",
+      "exit": "Вийти"
+    }
+  },
+  "SharedHeader": {
+    "links": {
+      "resume": "Резюме",
+      "coverLetter": "Супровідний лист"
+    },
+    "images": {
+      "logo": "Логотип",
+      "hamburger": "Меню"
+    }
+  },
+  "Footer": {
+    "logo": {
+      "alt": "Великий логотип"
+    },
+    "contacts": {
+      "title": "КОНТАКТИ",
+      "email": "info@baza-trainee.tech"
+    },
+    "createWithAi": {
+      "title": "СТВОРИ З ШІ",
+      "links": {
+        "resume": "Резюме",
+        "coverLetter": "Супровідний лист"
+      }
+    },
+    "help": {
+      "title": "ДОПОМОГА",
+      "links": {
+        "bazaSkill": "Baza Skill",
+        "jobTracker": "Job Tracker"
+      }
+    },
+    "socials": {
+      "title": "ШУКАЙ НАС",
+      "icons": {
+        "facebook": "Іконка Facebook",
+        "telegram": "Іконка Telegram",
+        "linkedin": "Іконка LinkedIn"
+      }
+    },
+    "copyright": "Baza Trainee Ukraine 2024 Усі права захищені"
+  },
+  "Settings": {
+    "changeName": {
+      "message": "Ім'я було успішно змінено",
+      "error": "Сталась помилка при зміні імені"
+    },
+    "changePassword": {
+      "message": "Пароль було успішно змінено",
+      "error": "Сталась помилка при зміні паролю"
+    }
+  },
+  "CoverLetterPage": {
+    "title": "Супровідні листи",
+    "create": "Створити супровідний лист",
+    "copy": "Копіювати",
+    "preview": "Перегляд",
+    "close": "Закрити"
+  },
+  "letter": {
+    "lastUpdated": "Останнє оновлення",
+    "copy": "копія",
+    "loading": "Завантаження резюме...",
+    "actions": {
+      "create": "Створити супровідний лист",
+      "downloadPdf": "Завантажити PDF",
+      "duplicate": "Дублювати",
+      "delete": "Видалити",
+      "cancel": "Скасувати",
+      "save": "Зберегти"
+    },
+    "delete": {
+      "title": "Видалити супровідний лист",
+      "description": "Ви впевнені, що хочете видалити цей лист? Ця дія не може бути скасована.",
+      "confirm": "Видалити",
+      "deleting": "Видалення..."
+    },
+    "messages": {
+      "deleteSuccess": "Лист успішно видалено",
+      "saveTitleSuccess": "Назву листа успішно оновлено",
+      "duplicateCreated": "Копію листа успішно створено"
+    },
+    "errors": {
+      "loadFailed": "Не вдалося завантажити супровідний лист",
+      "deleteFailed": "Не вдалося видалити супровідний лист",
+      "saveTitleFailed": "Не вдалося оновити назву супровідного листа"
+    }
+  },
+  "Interviewer": {
+    "title": "ШІ Генератор Інтерв'ю",
+    "createButton": "Створити нове інтерв'ю",
+    "regenerateButton": "Перегенерувати",
+    "expandButton": "Розгорнути",
+    "liveInterview": {
+      "title": "Сесія Живого Інтерв'ю",
+      "position": "Посада",
+      "experience": "Досвід",
+      "techStack": "Технічний стек",
+      "interviewDetails": "Деталі інтерв'ю",
+      "enableWebcam": "Увімкнути веб-камеру",
+      "enableCamera": "Увімкнути Камеру",
+      "disableCamera": "Вимкнути Камеру",
+      "startRecording": "Почати запис",
+      "stopRecording": "Зупинити запис",
+      "micDisabled": "Увімкніть мікрофон для використання мікрофону",
+      "cameraDisabled": "Камера наразі вимкнена",
+      "interviewChat": "Чат Інтерв'ю",
+      "responsePrompt": "Введіть вашу відповідь тут...",
+      "interviewTip": "Порада: Говоріть чітко та підтримуйте зоровий контакт з камерою",
+      "endInterviewButton": "Завершити Інтерв'ю",
+      "previousQuestion": "Попереднє питання",
+      "nextQuestion": "Наступне питання",
+      "currentQuestion": "Поточне питання",
+      "clearAnswer": "Очистити відповідь",
+      "checkAnswer": "Перевірити відповідь",
+      "generatingFeedback": "Генеруємо відгук...",
+      "feedbackReceived": "Відгук отримано"
+    },
+    "collapseButton": "Згорнути",
+    "deleteButton": "Видалити",
+    "cancelButton": "Скасувати",
+    "deleteConfirmTitle": "Видалити інтерв'ю",
+    "deleteConfirmDescription": "Ви впевнені, що хочете видалити це інтерв'ю? Цю дію неможливо скасувати.",
+    "deletingMessage": "Видалення...",
+    "expandMessage": "Натисніть \"Розгорнути\", щоб переглянути питання та відповіді.",
+    "failedMessage": "Не вдалося згенерувати питання. Будь ласка, спробуйте ще раз.",
+    "generatingMessage": "Генерація питань для інтерв'ю...",
+    "generatingQuestionsMessage": "Генерація питань для інтерв'ю...",
+    "loadingMessage": "Завантаження інтерв'ю...",
+    "noInterviewsMessage": "Ще не створено жодного інтерв'ю.",
+    "getStartedMessage": "Натисніть кнопку \"Створити нове інтерв'ю\", щоб почати.",
+    "rawResponseLabel": "Сира відповідь ШІ:",
+    "yearsExp": "років досвіду"
+  },
+  "FormLetter": {
+    "validation": {
+      "required": "Це поле обов'язкове",
+      "titleRequired": "Назва обов'язкова",
+      "nameRequired": "Ім'я обов'язкове",
+      "professionRequired": "Професія обов'язкова",
+      "positionRequired": "Посада обов'язкова",
+      "companyRequired": "Компанія обов'язкова",
+      "locationRequired": "Місцезнаходження обов'язкове",
+      "phoneRequired": "Телефон обов'язковий",
+      "invalidEmail": "Невірна адреса електронної пошти",
+      "nameRecipientRequired": "Ім'я отримувача обов'язкове",
+      "positionRecipientRequired": "Посада отримувача обов'язкова",
+      "templateRequired": "Будь ласка, оберіть шаблон",
+      "invalidText": "Будь ласка, введіть текст супровідного листа",
+      "invalidUrl": "Невірна URL адреса"
+    },
+    "navigation": {
+      "previousStep": "Попередній крок",
+      "nextStep": "Наступний крок",
+      "togglePreview": "Перемкнути перегляд",
+      "saving": "Збереження...",
+      "save": "Зберегти",
+      "saveLetter": "Зберегти лист"
+    },
+    "steps": {
+      "generalInfo": {
+        "title": "Загальна інформація",
+        "description": "Ця інформація буде відображена у вашому супровідному листі"
+      },
+      "personalInfo": {
+        "title": "Особиста інформація",
+        "description": "Заповніть вашу особисту інформацію"
+      },
+      "workInfo": {
+        "title": "Робоча інформація",
+        "description": "Заповніть інформацію про роботу та отримувача"
+      },
+      "text": {
+        "title": "Текст",
+        "description": "Напишіть текст супровідного листа",
+        "counterStart": "Залишилось: ",
+        "counterFinish": "символів"
+      }
+    },
+    "labels": {
+      "name": "Повне ім'я",
+      "profession": "Професія",
+      "location": "Місцезнаходження",
+      "phone": "Телефон",
+      "email": "Електронна пошта",
+      "position": "Посада",
+      "company": "Компанія",
+      "text": "Текст",
+      "nameRecipient": "Ім'я отримувача (опціонально)",
+      "positionRecipient": "Посада отримувача"
+    },
+    "placeholders": {
+      "name": "Джон Доу",
+      "profession": "Інженер програмного забезпечення",
+      "location": "Київ, Україна",
+      "phone": "+380 XX XXX XXXX",
+      "email": "john@example.com",
+      "position": "Старший інженер програмного забезпечення",
+      "company": "Компанія XYZ",
+      "text": "Напишіть текст вашого супровідного листа",
+      "nameRecipient": "Джон Сніг",
+      "positionRecipient": "IT рекрутер",
+      "description": "Опишіть мотивацію, сильні сторони та відповідність вимогам вакансії"
+    },
+    "text": {
+      "generate": "Згенерувати за допомогою ШІ",
+      "generating": "Генерація...",
+      "success": "Успішно",
+      "successMessage": "Текст листа успішно згенеровано!",
+      "error": "Помилка",
+      "errorMessage": "Не вдалося згенерувати текст листа. Будь ласка, спробуйте ще раз."
+    }
+  },
+  "cvAnalyzer": {
+    "title": "Аналізатор CV",
+    "description": "Завантажте своє резюме та отримайте зворотний зв'язок від ШІ для покращення ваших шансів отримати роботу мрії.",
+    "form": {
+      "companyName": "Назва компанії",
+      "companyPlaceholder": "Введіть назву компанії (необов'язково)",
+      "jobTitle": "Посада",
+      "jobTitlePlaceholder": "Введіть назву посади, на яку подаєтеся",
+      "jobDescription": "Опис вакансії",
+      "jobDescriptionPlaceholder": "Вставте опис вакансії тут для більш точного зворотного зв'язку",
+      "uploadCV": "Завантажити резюме",
+      "analyzeButton": "Проаналізувати резюме",
+      "fileUploaded": "Файл успішно завантажено! Натисніть, щоб змінити.",
+      "dropHere": "Перетягніть ваше резюме сюди...",
+      "dragDrop": "Перетягніть ваше резюме сюди",
+      "clickBrowse": "або натисніть, щоб вибрати файли",
+      "pdfOnly": "Тільки PDF файли, максимум 10МБ",
+      "analyzing": "Аналізуємо резюме...",
+      "optional": "(Необов'язково)",
+      "required": "*"
+    },
+    "status": {
+      "extractingText": "Витягування тексту з PDF...",
+      "analyzing": "Аналіз вашого резюме за допомогою ШІ...",
+      "complete": "Аналіз завершено!",
+      "pleaseWait": "Це може зайняти кілька хвилин, будь ласка, зачекайте."
+    },
+    "results": {
+      "title": "Результати аналізу",
+      "analyzeAnother": "Проаналізувати інше резюме",
+      "overallScore": "Загальна оцінка",
+      "sections": {
+        "ats": "Сумісність з ATS",
+        "content": "Якість контенту",
+        "structure": "Структура та формат",
+        "skills": "Навички та ключові слова",
+        "toneAndStyle": "Тон та стиль"
+      }
+    },
+    "errors": {
+      "missingFields": "Будь ласка, надайте файл резюме та назву посади.",
+      "analysisFailed": "Не вдалося проаналізувати резюме. Спробуйте ще раз.",
+      "pdfOnly": "Будь ласка, завантажте тільки PDF файл."
+    },
+    "success": {
+      "analysisComplete": "Аналіз резюме успішно завершено!",
+      "fileUploaded": "Файл успішно завантажено!"
+    }
+  }
+}
