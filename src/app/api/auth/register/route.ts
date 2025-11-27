@@ -1,8 +1,8 @@
-import { NextResponse } from "next/server";
-import { z } from "zod";
 import { signIn } from "@/lib/auth";
 import { createUser, findUserByEmail } from "@/resources/user-queries";
 import { hashPassword } from "@/utils/password";
+import { NextResponse } from "next/server";
+import { z } from "zod";
 
 const registerSchema = z.object({
   email: z.string().email(),
@@ -19,7 +19,10 @@ export async function POST(request: Request) {
 
     if (existingUser) {
       return NextResponse.json(
-        { error: "User with this email already exists" },
+        {
+          error: "User with this email already exists",
+          code: "USER_ALREADY_EXISTS",
+        },
         { status: 400 }
       );
     }
@@ -40,7 +43,10 @@ export async function POST(request: Request) {
 
     if (signInResult?.error) {
       return NextResponse.json(
-        { error: "Failed to sign in after registration" },
+        {
+          error: "Failed to sign in after registration",
+          code: "SIGN_IN_AFTER_REGISTER_FAILED",
+        },
         { status: 500 }
       );
     }
@@ -56,17 +62,23 @@ export async function POST(request: Request) {
       },
       { status: 201 }
     );
-  } catch (error) {
+  } catch (error:any) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: error.errors[0].message },
+        {
+          error: error.errors[0].message,
+          code: "VALIDATION_ERROR",
+        },
         { status: 400 }
       );
     }
 
     console.error("Registration error:", error);
     return NextResponse.json(
-      { error: "Something went wrong" },
+      {
+        error: "Internal server error during registration",
+        code: "INTERNAL_SERVER_ERROR",
+      },
       { status: 500 }
     );
   }
