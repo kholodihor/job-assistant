@@ -1,23 +1,23 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { signIn } from "next-auth/react";
-import { useForm } from "react-hook-form";
-import { toast } from "sonner";
-import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Link, Locale } from "@/i18n/routing";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { signIn } from "next-auth/react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
 import { Icon } from "../shared/icon";
 import { Checkbox } from "../ui/checkbox";
 import { authFormSchema } from "./schema";
@@ -126,7 +126,28 @@ export function AuthForm({ type, lang }: AuthFormProps) {
     if (context === "register" && isErrorObject(error)) {
       const errorStr = typeof error.error === "string" ? error.error : "";
       const messageStr = typeof error.message === "string" ? error.message : "";
+      const codeStr = typeof error.code === "string" ? error.code : "";
 
+      // Prefer structured error codes from the API when available
+      switch (codeStr) {
+        case "USER_ALREADY_EXISTS":
+          return lang === "en"
+            ? "This email is already registered. Please use a different email or sign in."
+            : "Цей email вже зареєстрований. Використайте інший email або увійдіть.";
+        case "VALIDATION_ERROR":
+          return lang === "en"
+            ? "Please check your input data and try again."
+            : "Перевірте введені дані та спробуйте ще раз.";
+        case "SIGN_IN_AFTER_REGISTER_FAILED":
+        case "INTERNAL_SERVER_ERROR":
+          return lang === "en"
+            ? "Server error during registration. Please try again later."
+            : "Помилка сервера під час реєстрації. Спробуйте пізніше.";
+        default:
+          break;
+      }
+
+      // Fallback to string inspection if no code is present
       if (errorStr.includes("email") || messageStr.includes("email")) {
         return lang === "en"
           ? "This email is already registered. Please use a different email or sign in."

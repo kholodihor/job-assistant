@@ -1,9 +1,9 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import { useSearchParams } from "next/navigation";
 
 export function AuthError() {
   const t = useTranslations("Auth");
@@ -20,6 +20,7 @@ export function AuthError() {
     UserNotFound: t("errors.userNotFound"),
     InvalidCredentials: t("errors.invalidCredentials"),
     EmailExists: t("errors.emailExists"),
+    UntrustedHost: t("errors.untrustedHost"),
     default: t("errors.default"),
   };
 

@@ -62,7 +62,7 @@ export async function POST(request: Request) {
       },
       { status: 201 }
     );
-  } catch (error:any) {
+  } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
