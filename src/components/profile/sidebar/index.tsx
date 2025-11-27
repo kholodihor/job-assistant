@@ -28,7 +28,7 @@ export function Sidebar({ lng }: { lng: string }) {
 
   return (
     <aside className="hidden border-r-2 px-4 font-semibold lg:block xl:w-[20vw]">
-      <Avatar name={session?.user.name || "Baza Trainee"} />
+      <Avatar name={session?.user.name || "User"} />
       <nav className="mt-5">
         <ul className="space-y-1">
           <li>

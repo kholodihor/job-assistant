@@ -1,23 +1,23 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Link, Locale } from "@/i18n/routing";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { signIn } from "next-auth/react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
+import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Link, Locale } from "@/i18n/routing";
 import { Icon } from "../shared/icon";
 import { Checkbox } from "../ui/checkbox";
 import { authFormSchema } from "./schema";
@@ -329,11 +329,16 @@ export function AuthForm({ type, lang }: AuthFormProps) {
               (lang === "en"
                 ? "This email is already registered with email/password. Please sign in using your email and password instead of Google."
                 : "Цей email вже зареєстрований з паролем. Будь ласка, увійдіть, використовуючи свій email та пароль замість Google.")}
+            {error === "UntrustedHost" &&
+              (lang === "en"
+                ? "Authentication configuration error. Please try again later."
+                : "Помилка конфігурації авторизації. Спробуйте пізніше.")}
             {![
               "CredentialsSignin",
               "AccessDenied",
               "OAuthAccountNotLinked",
               "UseCredentials",
+              "UntrustedHost",
             ].includes(error) &&
               (lang === "en"
                 ? "An error occurred during authentication. Please try again."
@@ -475,7 +480,7 @@ export function AuthForm({ type, lang }: AuthFormProps) {
             />
           )}
 
-          {form.formState.errors.root && (
+          {type === "signin" && !error && form.formState.errors.root && (
             <div className="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-600">
               <div className="flex items-start gap-2">
                 <Icon

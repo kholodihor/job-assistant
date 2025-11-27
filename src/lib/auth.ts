@@ -39,6 +39,8 @@ async function getLocaleFromHeaders() {
 
 const authOptions = NextAuth({
   adapter: DrizzleAdapter(db),
+  // Explicitly trust the deployment host (required in some Auth.js v5 setups)
+  trustHost: true,
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
