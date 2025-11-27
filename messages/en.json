@@ -72,7 +72,8 @@
       "useCredentials": "Please use email and password to sign in with {email}",
       "credentialsSignin": "Invalid email or password",
       "userNotFound": "User not found",
-      "invalidCredentials": "Invalid email or password"
+      "invalidCredentials": "Invalid email or password",
+      "untrustedHost": "Authentication configuration error. Please try again later."
     }
   },
   "404Page": {
