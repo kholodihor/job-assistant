@@ -9,7 +9,9 @@ import { auth } from "@/lib/auth";
 
 export async function POST(req: NextRequest) {
   try {
-    const session = await auth();
+    const session = await auth.api.getSession({
+      headers: req.headers,
+    });
     if (!session?.user?.id) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
@@ -58,7 +60,10 @@ export async function POST(req: NextRequest) {
 
 export async function GET() {
   try {
-    const session = await auth();
+    const session = await auth.api.getSession({
+      // no request object here, rely on global headers
+      headers: new Headers(),
+    });
     if (!session?.user?.id) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }

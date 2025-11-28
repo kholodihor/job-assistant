@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";
 import { db } from "@/db";
-import { users } from "@/db/schema";
+import { account } from "@/db/schema";
 import { hashPassword } from "@/utils/password";
 
 export async function POST(req: NextRequest) {
@@ -10,30 +10,32 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { oldPassword, newPassword, idUser, updatedAt } = body;
     const formattedUpdatedAt = updatedAt ? new Date(updatedAt) : new Date();
+    console.log(formattedUpdatedAt);
 
-    const user = await db.select().from(users).where(eq(users.id, idUser));
-    if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
-    }
+    const accounts = await db
+      .select()
+      .from(account)
+      .where(eq(account.userId, idUser));
 
-    const userPassword = user[0].password;
-    if (!userPassword) {
+    const passwordAccount = accounts.find((a) => a.password != null);
+
+    if (!passwordAccount || !passwordAccount.password) {
       return NextResponse.json(
         { error: "User password is missing" },
         { status: 400 }
       );
     }
 
-    const isMatch = await bcrypt.compare(oldPassword, userPassword);
+    const isMatch = await bcrypt.compare(oldPassword, passwordAccount.password);
     if (!isMatch) {
       return NextResponse.json({ error: "Old password is incorrect" });
     }
 
     const hashedPassword = await hashPassword(newPassword);
     await db
-      .update(users)
-      .set({ password: hashedPassword, updatedAt: formattedUpdatedAt })
-      .where(eq(users.id, idUser));
+      .update(account)
+      .set({ password: hashedPassword })
+      .where(eq(account.id, passwordAccount.id));
 
     return NextResponse.json({
       message: "Password has been changed successfully",

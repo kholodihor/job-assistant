@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useSession } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
 import { ChangeForm } from "./change-name";
 import { ChangePassword } from "./change-password";

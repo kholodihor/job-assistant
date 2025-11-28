@@ -1,5 +1,4 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useSession } from "next-auth/react";
 import { useLocale, useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -13,16 +12,15 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Locale } from "@/i18n/routing";
+import { useSession } from "@/lib/auth-client";
 import { ChangeNameValues, changeNameSchema } from "./schema";
 
 export const ChangeForm = () => {
   const t = useTranslations("Settings");
   const lang = useLocale() as Locale;
-  const { data: session, update } = useSession();
+  const { data: session } = useSession();
 
   async function handleSubmit(values: ChangeNameValues) {
-    const { name } = values;
-
     try {
       await fetch("/api/change-name", {
         method: "POST",
@@ -32,15 +30,7 @@ export const ChangeForm = () => {
         body: JSON.stringify(values),
       });
       toast.success(t("changeName.message"));
-      if (session?.user) {
-        await update({
-          ...session,
-          user: {
-            ...session?.user,
-            name,
-          },
-        });
-      }
+      // better-auth session will be refreshed on next navigation; no client update
     } catch (error) {
       toast.error(t("changeName.error"));
       console.error("Error submitting form:", error);

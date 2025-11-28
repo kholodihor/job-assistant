@@ -3,7 +3,7 @@ import { eq } from "drizzle-orm";
 import nodemailer from "nodemailer";
 import { z } from "zod";
 import { db } from "@/db";
-import { users } from "@/db/schema";
+import { user as userTable } from "@/db/schema";
 import { env } from "@/env";
 
 // Create reusable transporter
@@ -29,7 +29,10 @@ export async function POST(req: NextRequest) {
     const { email } = requestSchema.parse(body);
 
     // Find user by email
-    const [user] = await db.select().from(users).where(eq(users.email, email));
+    const [user] = await db
+      .select()
+      .from(userTable) // Use the userTable in the forgot-password query
+      .where(eq(userTable.email, email));
 
     if (!user) {
       // Return success even if user not found to prevent email enumeration

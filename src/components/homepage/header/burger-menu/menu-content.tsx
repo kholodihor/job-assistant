@@ -24,7 +24,7 @@ export const MenuContent = ({ closeMenu }: { closeMenu: () => void }) => {
   };
 
   const handleSignOut = () => {
-    signOut({ redirectTo: "/" });
+    signOut();
     closeMenu();
   };
 

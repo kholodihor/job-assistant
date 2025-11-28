@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "@/db";
-import { users } from "@/db/schema";
+import { account } from "@/db/schema";
 import { hashPassword } from "@/utils/password";
 
 const resetSchema = z.object({
@@ -72,18 +72,15 @@ export async function POST(req: NextRequest) {
     const hashedPassword = await hashPassword(password);
 
     try {
-      // Update password using Drizzle
+      // Update password stored on better-auth account table for this user
       const result = await db
-        .update(users)
-        .set({
-          password: hashedPassword,
-          updatedAt: new Date(),
-        })
-        .where(eq(users.id, userId))
-        .returning({ id: users.id });
+        .update(account)
+        .set({ password: hashedPassword })
+        .where(eq(account.userId, userId))
+        .returning({ id: account.id });
 
       if (result.length === 0) {
-        console.error("User not found:", userId);
+        console.error("Account not found for user:", userId);
         return NextResponse.json(
           { error: "Invalid reset link" },
           { status: 400 }
