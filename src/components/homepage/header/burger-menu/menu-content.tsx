@@ -1,10 +1,10 @@
-import { signOut, useSession } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import { LanguageSwitcher } from "@/components/shared/language-switcher";
 import { Link, usePathname } from "@/i18n/routing";
+import { signOut, useSession } from "@/lib/auth-client";
 
 export const MenuContent = ({ closeMenu }: { closeMenu: () => void }) => {
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
   const pathname = usePathname();
   const t = useTranslations("Header.menu");
 
@@ -24,13 +24,13 @@ export const MenuContent = ({ closeMenu }: { closeMenu: () => void }) => {
   };
 
   const handleSignOut = () => {
-    signOut({ callbackUrl: "/" });
+    signOut({ redirectTo: "/" });
     closeMenu();
   };
 
   return (
     <>
-      {pathname.split("/")[1] === "profile" && status === "authenticated" ? (
+      {pathname.split("/")[1] === "profile" && !!session?.user ? (
         <div className="mt-3 flex size-full flex-col gap-7 px-7 pb-16 pt-20">
           <div className="flex items-center justify-center gap-4 ms:justify-start">
             <div className="flex rounded-full bg-white px-5 py-4">

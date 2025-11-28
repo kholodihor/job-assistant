@@ -1,9 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import { signOut, useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/routing";
+import { signOut, useSession } from "@/lib/auth-client";
 
 export function UserProfile() {
   const { data: session } = useSession();

@@ -3,7 +3,6 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { signIn } from "next-auth/react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -18,6 +17,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Link, Locale } from "@/i18n/routing";
+import { authClient } from "@/lib/auth-client";
 import { Icon } from "../shared/icon";
 import { Checkbox } from "../ui/checkbox";
 import { authFormSchema } from "./schema";
@@ -33,7 +33,6 @@ export function AuthForm({ type, lang }: AuthFormProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/profile/dashboard";
-  const error = searchParams.get("error");
   const [showPassword, setShowPassword] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -108,17 +107,13 @@ export function AuthForm({ type, lang }: AuthFormProps) {
         : "Помилка сервера. Спробуйте пізніше.";
     }
 
-    // Authentication specific errors
+    // Authentication specific errors (better-auth generic handling)
     if (context === "signin") {
-      if (error === "CredentialsSignin" || error === "Configuration") {
-        return lang === "en"
-          ? "Invalid email or password. Please check your credentials."
-          : "Невірний email або пароль. Перевірте свої дані.";
+      if (typeof error === "string") {
+        return error;
       }
-      if (error === "AccessDenied") {
-        return lang === "en"
-          ? "Access denied. Please check your account status."
-          : "Доступ заборонено. Перевірте статус свого облікового запису.";
+      if (isErrorObject(error) && typeof error.message === "string") {
+        return error.message;
       }
     }
 
@@ -198,67 +193,45 @@ export function AuthForm({ type, lang }: AuthFormProps) {
       setIsLoading(true);
 
       if (type === "register") {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+        const { error } = await authClient.signUp.email({
+          email: data.email,
+          password: data.password,
+          name: data.name || "",
+        });
 
-        try {
-          const response = await fetch("/api/auth/register", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(data),
-            signal: controller.signal,
-          });
-
-          clearTimeout(timeoutId);
-
-          if (!response.ok) {
-            const errorData = await response
-              .json()
-              .catch(() => ({ error: "Unknown error" }));
-            const errorMessage = getErrorMessage(
-              { ...errorData, status: response.status },
-              "register"
-            );
-
-            form.setError("root", { message: errorMessage });
-            toast.error(errorMessage);
-
-            // Offer retry for certain errors
-            if (response.status >= 500 || response.status === 429) {
-              const retried = await handleRetry(data);
-              if (retried !== false) return;
-            }
-            return;
-          }
-
-          // Reset retry count on success
-          setRetryCount(0);
-          setShowSuccessModal(true);
-          toast.success(
-            lang === "en"
-              ? "Registration successful! Please check your email."
-              : "Реєстрація успішна! Перевірте свою електронну пошту."
+        if (error) {
+          const errorMessage = getErrorMessage(
+            error.message ?? "Registration failed. Please try again.",
+            "register"
           );
+          toast.error(errorMessage);
           return;
-        } catch (fetchError: unknown) {
-          clearTimeout(timeoutId);
-          throw fetchError;
         }
+
+        // Reset retry count on success
+        setRetryCount(0);
+        setShowSuccessModal(true);
+        toast.success(
+          lang === "en"
+            ? "Registration successful! You can now sign in."
+            : "Реєстрація успішна! Тепер ви можете увійти."
+        );
+        return;
       }
 
-      // Sign in flow
-      const result = await signIn("credentials", {
+      // Sign in flow with better-auth
+      const { error } = await authClient.signIn.email({
         email: data.email,
         password: data.password,
-        remember: data.rememberMe,
-        redirect: false,
+        callbackURL: callbackUrl,
+        rememberMe: data.rememberMe,
       });
 
-      if (result?.error) {
-        const errorMessage = getErrorMessage(result.error, "signin");
-        form.setError("root", { message: errorMessage });
+      if (error) {
+        const errorMessage = getErrorMessage(
+          error.message ?? "Authentication failed. Please try again.",
+          "signin"
+        );
         toast.error(errorMessage);
         return;
       }
@@ -272,7 +245,6 @@ export function AuthForm({ type, lang }: AuthFormProps) {
       console.error("Auth error:", error);
       const errorMessage = getErrorMessage(error, type);
 
-      form.setError("root", { message: errorMessage });
       toast.error(errorMessage);
 
       // Offer retry for network errors
@@ -303,49 +275,6 @@ export function AuthForm({ type, lang }: AuthFormProps) {
               : "або скористайтеся email"}
         </p>
       </div>
-
-      {error && (
-        <div className="mb-4 rounded-md border border-red-200 bg-red-50 p-3 text-small text-red-600">
-          <div className="flex items-center gap-2">
-            <Icon name="icon-warning" size="16px" className="text-red-500" />
-            <span className="font-medium">
-              {lang === "en" ? "Authentication Error" : "Помилка авторизації"}
-            </span>
-          </div>
-          <p className="mt-1 text-sm">
-            {error === "CredentialsSignin" &&
-              (lang === "en"
-                ? "Invalid email or password. Please check your credentials."
-                : "Невірний email або пароль. Перевірте свої дані.")}
-            {error === "AccessDenied" &&
-              (lang === "en"
-                ? "This email is registered with email/password. Please sign in with your password."
-                : "Цей email зареєстрований з паролем. Будь ласка, увійдіть, використовуючи свій пароль.")}
-            {error === "OAuthAccountNotLinked" &&
-              (lang === "en"
-                ? "This email is already registered with a different sign-in method."
-                : "Цей email вже зареєстрований з іншим способом входу.")}
-            {error === "UseCredentials" &&
-              (lang === "en"
-                ? "This email is already registered with email/password. Please sign in using your email and password instead of Google."
-                : "Цей email вже зареєстрований з паролем. Будь ласка, увійдіть, використовуючи свій email та пароль замість Google.")}
-            {error === "UntrustedHost" &&
-              (lang === "en"
-                ? "Authentication configuration error. Please try again later."
-                : "Помилка конфігурації авторизації. Спробуйте пізніше.")}
-            {![
-              "CredentialsSignin",
-              "AccessDenied",
-              "OAuthAccountNotLinked",
-              "UseCredentials",
-              "UntrustedHost",
-            ].includes(error) &&
-              (lang === "en"
-                ? "An error occurred during authentication. Please try again."
-                : "Сталася помилка під час авторизації. Спробуйте ще раз.")}
-          </p>
-        </div>
-      )}
 
       <Form {...form}>
         <form
@@ -480,30 +409,7 @@ export function AuthForm({ type, lang }: AuthFormProps) {
             />
           )}
 
-          {type === "signin" && !error && form.formState.errors.root && (
-            <div className="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-600">
-              <div className="flex items-start gap-2">
-                <Icon
-                  name="icon-warning"
-                  size="16px"
-                  className="mt-0.5 flex-shrink-0 text-red-500"
-                />
-                <div>
-                  <p className="mb-1 font-medium">
-                    {lang === "en" ? "Error" : "Помилка"}
-                  </p>
-                  <p>{form.formState.errors.root.message}</p>
-                  {retryCount > 0 && (
-                    <p className="mt-2 text-xs text-red-500">
-                      {lang === "en"
-                        ? `Attempt ${retryCount + 1} of 3`
-                        : `Спроба ${retryCount + 1} з 3`}
-                    </p>
-                  )}
-                </div>
-              </div>
-            </div>
-          )}
+          {/* Inline form-level error box removed; errors are shown via toasts only */}
 
           <Button
             type="submit"

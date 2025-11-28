@@ -1,7 +1,7 @@
 "use client";
 
-import { signIn } from "next-auth/react";
 import { Button } from "@/components/ui/button";
+import { authClient } from "@/lib/auth-client";
 import { Icon } from "../shared/icon";
 
 export function SocialAuth() {
@@ -10,7 +10,12 @@ export function SocialAuth() {
       <Button
         variant="outline"
         className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-white text-base font-medium transition-colors hover:bg-gray-50 sm:w-[200px]"
-        onClick={() => signIn("google", { callbackUrl: "/profile/dashboard" })}
+        onClick={() =>
+          authClient.signIn.social({
+            provider: "google",
+            callbackURL: "/profile/dashboard",
+          })
+        }
       >
         <Icon name="icon-google" size="24px" />
         Google

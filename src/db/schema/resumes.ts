@@ -7,15 +7,15 @@ import {
   uuid,
   varchar,
 } from "drizzle-orm/pg-core";
+import { user } from "./auth";
 import { educations } from "./educations";
-import { users } from "./users";
 import { workExperiences } from "./work-experiences";
 
 export const resumes = pgTable("resumes", {
   id: uuid("id").primaryKey().defaultRandom(),
-  userId: uuid("user_id")
+  userId: text("user_id")
     .notNull()
-    .references(() => users.id, { onDelete: "cascade" }),
+    .references(() => user.id, { onDelete: "cascade" }),
 
   title: varchar("title", { length: 255 }),
   name: varchar("name", { length: 255 }),
@@ -47,8 +47,8 @@ export const resumes = pgTable("resumes", {
 export const resumesRelations = relations(resumes, ({ many, one }) => ({
   educations: many(educations),
   workExperiences: many(workExperiences),
-  user: one(users, {
+  user: one(user, {
     fields: [resumes.userId],
-    references: [users.id],
+    references: [user.id],
   }),
 }));

@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import { signOut } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import { SettingIcon } from "@/components/icons/setting-icon";
 import {
@@ -11,6 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Link } from "@/i18n/routing";
+import { signOut } from "@/lib/auth-client";
 
 export const ProfileInfo = ({ name }: { name: string }) => {
   const [open, setOpen] = useState(false);
@@ -54,7 +54,8 @@ export const ProfileInfo = ({ name }: { name: string }) => {
                 const locale = window.location.pathname.startsWith("/en/")
                   ? "en"
                   : "ua";
-                signOut({ callbackUrl: `/${locale}` });
+                signOut();
+                window.location.href = `/${locale}`;
               }}
             >
               <div className="flex gap-2">

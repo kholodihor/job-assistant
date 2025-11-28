@@ -1,8 +1,8 @@
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { useSession } from "next-auth/react";
 import { Icon } from "@/components/shared/icon";
 import { Link } from "@/i18n/routing";
+import { useSession } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
 import { Avatar } from "./components/avatar";
 

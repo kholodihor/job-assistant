@@ -1,12 +1,12 @@
 import { sql } from "drizzle-orm";
 import { pgTable, text, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
-import { users } from "./users";
+import { user } from "./auth";
 
 export const letters = pgTable("letters", {
   id: uuid("id").primaryKey().defaultRandom(),
-  userId: uuid("user_id")
+  userId: text("user_id")
     .notNull()
-    .references(() => users.id, { onDelete: "cascade" }),
+    .references(() => user.id, { onDelete: "cascade" }),
 
   title: varchar("title", { length: 255 }),
   name: varchar("name", { length: 255 }),
