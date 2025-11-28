@@ -3,9 +3,16 @@ import { eq } from "drizzle-orm";
 import { db } from "@/db";
 import { user as userTable } from "@/db/schema";
 import { findUserByEmail } from "@/resources/user-queries";
+import { requireAuth } from "@/utils/auth-guard";
 
 export async function POST(req: NextRequest) {
   try {
+    const { session } = await requireAuth();
+
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const body = await req.json();
     const { name, email, updatedAt } = body;
     const existingUser = await findUserByEmail(email);

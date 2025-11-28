@@ -3,16 +3,15 @@ import { desc, eq } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "@/db";
 import { letters } from "@/db/schema";
-import { auth } from "@/lib/auth";
+import { requireAuth } from "@/utils/auth-guard";
 import { letterSchema } from "./schema";
 
 export async function POST(req: NextRequest) {
   try {
-    const session = await auth.api.getSession({
-      headers: req.headers,
-    });
-    if (!session?.user?.id) {
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    const { session } = await requireAuth();
+
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const body = await req.json();
@@ -33,7 +32,7 @@ export async function POST(req: NextRequest) {
         .insert(letters)
         .values({
           ...validatedData,
-          userId: session.user.id,
+          userId: session.userId,
         })
         .returning();
 
@@ -60,20 +59,19 @@ export async function POST(req: NextRequest) {
   }
 }
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
-    const session = await auth.api.getSession({
-      headers: req.headers,
-    });
-    if (!session?.user?.id) {
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    const { session } = await requireAuth();
+
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // First get all letters
     const userLetters = await db
       .select()
       .from(letters)
-      .where(eq(letters.userId, session.user.id))
+      .where(eq(letters.userId, session.userId))
       .orderBy(desc(letters.updatedAt));
 
     return NextResponse.json(userLetters);

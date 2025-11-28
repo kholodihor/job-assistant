@@ -31,7 +31,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
         <AlertProvider>
           <Toaster richColors closeButton position="top-right" />
           <Header />
-          <main>{children}</main>
+          <main className="min-h-[85vh]">{children}</main>
           <Footer />
         </AlertProvider>
         <NextTopLoader

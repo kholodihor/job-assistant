@@ -297,6 +297,7 @@
   "Header": {
     "accountButton": {
       "myAccount": "Мій акаунт",
+      "signIn": "Увійти",
       "userIcon": "Користувач"
     },
     "profileInfo": {

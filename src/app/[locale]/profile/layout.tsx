@@ -19,18 +19,8 @@ export default function ProfileLayout({
     return <div>Loading...</div>;
   }
 
-  // useEffect(() => {
-  //   if (status === "unauthenticated") {
-  //     const locale = pathname.split("/")[1];
-  //     // Use current path as callback URL
-  //     router.replace(
-  //       `/${locale}/signin?callbackUrl=${encodeURIComponent(pathname)}`
-  //     );
-  //   }
-  // }, [status, router, pathname]);
-
   return (
-    <div className="flex w-full pb-[120px] pt-10">
+    <div className="flex min-h-[85vh] w-full pb-[120px] pt-10">
       <HorizontalSidebar />
       <Sidebar lng={locale} />
       <div className="w-full overflow-hidden">{children}</div>

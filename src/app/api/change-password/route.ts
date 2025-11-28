@@ -3,10 +3,17 @@ import bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";
 import { db } from "@/db";
 import { account } from "@/db/schema";
+import { requireAuth } from "@/utils/auth-guard";
 import { hashPassword } from "@/utils/password";
 
 export async function POST(req: NextRequest) {
   try {
+    const { session } = await requireAuth();
+
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const body = await req.json();
     const { oldPassword, newPassword, idUser, updatedAt } = body;
     const formattedUpdatedAt = updatedAt ? new Date(updatedAt) : new Date();

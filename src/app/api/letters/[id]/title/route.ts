@@ -3,7 +3,7 @@ import { and, eq, sql } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "@/db";
 import { letters } from "@/db/schema";
-import { auth } from "@/lib/auth";
+import { requireAuth } from "@/utils/auth-guard";
 
 const updateTitleSchema = z.object({
   title: z.string().min(1).max(255),
@@ -14,11 +14,10 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await auth.api.getSession({
-      headers: req.headers,
-    });
-    if (!session?.user?.id) {
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    const { session } = await requireAuth();
+
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const { id } = await params;
@@ -29,7 +28,7 @@ export async function PATCH(
 
     // First check if the letter exists and belongs to the user
     const letter = await db.query.letters.findFirst({
-      where: and(eq(letters.id, id), eq(letters.userId, session.user.id)),
+      where: and(eq(letters.id, id), eq(letters.userId, session.userId)),
       columns: { id: true },
     });
 

@@ -3,7 +3,7 @@ import { and, eq } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "@/db";
 import { interviews } from "@/db/schema";
-import { auth } from "@/lib/auth";
+import { requireAuth } from "@/utils/auth-guard";
 
 // Schema for updating interview title if needed in the future
 const updateInterviewSchema = z.object({
@@ -15,11 +15,10 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await auth.api.getSession({
-      headers: req.headers,
-    });
-    if (!session?.user?.id) {
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    const { session } = await requireAuth();
+
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const { id } = await params;
@@ -29,7 +28,7 @@ export async function DELETE(
       .select()
       .from(interviews)
       .where(
-        and(eq(interviews.id, id), eq(interviews.createdBy, session.user.id))
+        and(eq(interviews.id, id), eq(interviews.createdBy, session.userId))
       )
       .then((res) => res[0]);
 
@@ -47,7 +46,7 @@ export async function DELETE(
     await db
       .delete(interviews)
       .where(
-        and(eq(interviews.id, id), eq(interviews.createdBy, session.user.id))
+        and(eq(interviews.id, id), eq(interviews.createdBy, session.userId))
       );
 
     return NextResponse.json({ message: "Interview deleted successfully" });
@@ -65,11 +64,10 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await auth.api.getSession({
-      headers: req.headers,
-    });
-    if (!session?.user?.id) {
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    const { session } = await requireAuth();
+
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
     const { id } = await params;
 
@@ -78,7 +76,7 @@ export async function GET(
       .select()
       .from(interviews)
       .where(
-        and(eq(interviews.id, id), eq(interviews.createdBy, session.user.id))
+        and(eq(interviews.id, id), eq(interviews.createdBy, session.userId))
       )
       .then((res) => res[0]);
 
@@ -104,11 +102,10 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await auth.api.getSession({
-      headers: req.headers,
-    });
-    if (!session?.user?.id) {
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    const { session } = await requireAuth();
+
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const { id } = await params;
@@ -122,7 +119,7 @@ export async function PATCH(
       .select()
       .from(interviews)
       .where(
-        and(eq(interviews.id, id), eq(interviews.createdBy, session.user.id))
+        and(eq(interviews.id, id), eq(interviews.createdBy, session.userId))
       )
       .then((res) => res[0]);
 
@@ -138,7 +135,7 @@ export async function PATCH(
       .update(interviews)
       .set({ jobPosition: validatedData.jobPosition })
       .where(
-        and(eq(interviews.id, id), eq(interviews.createdBy, session.user.id))
+        and(eq(interviews.id, id), eq(interviews.createdBy, session.userId))
       )
       .returning();
 

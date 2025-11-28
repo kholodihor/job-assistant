@@ -5,15 +5,14 @@ import { desc, eq } from "drizzle-orm";
 import { interviewFormSchema } from "@/components/profile/interview/forms/schema";
 import { db } from "@/db";
 import { interviews } from "@/db/schema";
-import { auth } from "@/lib/auth";
+import { requireAuth } from "@/utils/auth-guard";
 
 export async function POST(req: NextRequest) {
   try {
-    const session = await auth.api.getSession({
-      headers: req.headers,
-    });
-    if (!session?.user?.id) {
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    const { session } = await requireAuth();
+
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const body = await req.json();
@@ -37,7 +36,7 @@ export async function POST(req: NextRequest) {
           jobDescription: validatedData.description,
           jobExperience: validatedData.yearsOfExperience,
           techStack: validatedData.techStack || [],
-          createdBy: session.user.id,
+          createdBy: session.userId,
         })
         .returning();
 
@@ -60,19 +59,17 @@ export async function POST(req: NextRequest) {
 
 export async function GET() {
   try {
-    const session = await auth.api.getSession({
-      // no request object here, rely on global headers
-      headers: new Headers(),
-    });
-    if (!session?.user?.id) {
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    const { session } = await requireAuth();
+
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // Get all interviews for the user
     const userInterviews = await db
       .select()
       .from(interviews)
-      .where(eq(interviews.createdBy, session.user.id))
+      .where(eq(interviews.createdBy, session.userId))
       .orderBy(desc(interviews.createdAt));
 
     return NextResponse.json(userInterviews);

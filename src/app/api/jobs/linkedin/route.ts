@@ -6,6 +6,7 @@ import puppeteerCore, {
   type Browser as BrowserCore,
   type LaunchOptions,
 } from "puppeteer-core";
+import { requireAuth } from "@/utils/auth-guard";
 import { searchForKeyword } from "./helper";
 
 export const dynamic = "force-dynamic";
@@ -17,6 +18,12 @@ export const revalidate = 0;
 
 export async function POST(req: Request) {
   try {
+    const { session } = await requireAuth();
+
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const { searchQuery } = await req.json();
     const keywords = searchQuery.split(/[,\s]+/).filter(Boolean);
 

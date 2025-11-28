@@ -280,6 +280,7 @@
   "Header": {
     "accountButton": {
       "myAccount": "My Account",
+      "signIn": "Sign In",
       "userIcon": "User"
     },
     "profileInfo": {

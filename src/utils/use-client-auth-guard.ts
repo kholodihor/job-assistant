@@ -24,3 +24,8 @@ export const useClientAuthGuard = () => {
 
   return { session, isPending };
 };
+
+export const useCheckSession = () => {
+  const { data: session } = useSession();
+  return session;
+};

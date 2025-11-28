@@ -3,17 +3,16 @@ import { desc, eq } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "@/db";
 import { educations, resumes, workExperiences } from "@/db/schema";
-import { auth } from "@/lib/auth";
+import { requireAuth } from "@/utils/auth-guard";
 import { uploadBase64Image } from "../cloudinary/upload";
 import { resumeSchema } from "./schema";
 
 export async function POST(req: NextRequest) {
   try {
-    const session = await auth.api.getSession({
-      headers: req.headers,
-    });
-    if (!session?.user?.id) {
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    const { session } = await requireAuth();
+
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const body = await req.json();
@@ -45,7 +44,7 @@ export async function POST(req: NextRequest) {
         .insert(resumes)
         .values({
           ...validatedData,
-          userId: session.user.id,
+          userId: session.userId,
         })
         .returning();
 
@@ -108,20 +107,19 @@ export async function POST(req: NextRequest) {
   }
 }
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
-    const session = await auth.api.getSession({
-      headers: req.headers,
-    });
-    if (!session?.user?.id) {
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    const { session } = await requireAuth();
+
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // First get all resumes
     const userResumes = await db
       .select()
       .from(resumes)
-      .where(eq(resumes.userId, session.user.id))
+      .where(eq(resumes.userId, session.userId))
       .orderBy(desc(resumes.updatedAt));
 
     // Then get related data for each resume

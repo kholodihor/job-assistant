@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { db } from "@/db";
 import { educations } from "@/db/schema";
-import { auth } from "@/lib/auth";
+import { requireAuth } from "@/utils/auth-guard";
 
 const educationSchema = z.object({
   degree: z.string().min(1).max(255),
@@ -15,15 +15,10 @@ const educationSchema = z.object({
 
 export async function POST(req: NextRequest) {
   try {
-    const session = await auth.api.getSession({
-      headers: req.headers,
-    });
+    const { session } = await requireAuth();
 
-    if (!session?.user) {
-      return NextResponse.json(
-        { error: "You must be logged in to add education" },
-        { status: 401 }
-      );
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const body = await req.json();
