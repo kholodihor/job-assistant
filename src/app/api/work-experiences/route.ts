@@ -16,7 +16,9 @@ const workExperienceSchema = z.object({
 
 export async function POST(req: NextRequest) {
   try {
-    const session = await auth();
+    const session = await auth.api.getSession({
+      headers: req.headers,
+    });
 
     if (!session?.user) {
       return NextResponse.json(
