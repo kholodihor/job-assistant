@@ -1,20 +1,23 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-// import { useEffect } from "react";
-// import { useSession } from "next-auth/react";
 import { Sidebar } from "@/components/profile/sidebar";
 import { HorizontalSidebar } from "@/components/profile/sidebar/components/horizontal-sidebar";
+import { useClientAuthGuard } from "@/utils/use-client-auth-guard";
 
 export default function ProfileLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  // const { data: session, status } = useSession();
-  // const router = useRouter();
   const pathname = usePathname();
   const locale = pathname.split("/")[1];
+
+  const { isPending } = useClientAuthGuard();
+
+  if (isPending) {
+    return <div>Loading...</div>;
+  }
 
   // useEffect(() => {
   //   if (status === "unauthenticated") {
@@ -25,14 +28,6 @@ export default function ProfileLayout({
   //     );
   //   }
   // }, [status, router, pathname]);
-
-  // if (status === "loading") {
-  //   return <div>Loading...</div>;
-  // }
-
-  // if (!session) {
-  //   return null;
-  // }
 
   return (
     <div className="flex w-full pb-[120px] pt-10">

@@ -17,12 +17,12 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Link, Locale } from "@/i18n/routing";
-import { authClient } from "@/lib/auth-client";
+import { getAuthErrorMessage } from "@/utils/auth-errors";
 import { Icon } from "../shared/icon";
 import { Checkbox } from "../ui/checkbox";
 import { authFormSchema } from "./schema";
 import { SocialAuth } from "./social-auth";
-import { SuccessRegistrationModal } from "./success-registration-modal";
+import { useSignIn, useSignUp } from "./use-auth";
 
 interface AuthFormProps {
   type: "signin" | "register";
@@ -34,9 +34,7 @@ export function AuthForm({ type, lang }: AuthFormProps) {
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/profile/dashboard";
   const [showPassword, setShowPassword] = useState(false);
-  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [retryCount, setRetryCount] = useState(0);
 
   const togglePasswordVisibility = () => {
     setShowPassword((prev) => !prev);
@@ -53,139 +51,60 @@ export function AuthForm({ type, lang }: AuthFormProps) {
     },
   });
 
-  // Enhanced error handling functions
+  // Enhanced error handling via shared utility
   const getErrorMessage = (
     error: unknown,
     context: "register" | "signin"
-  ): string => {
-    // Type guard for Error objects
-    const isError = (err: unknown): err is Error => {
-      return err instanceof Error;
-    };
+  ): string => getAuthErrorMessage(error, context, lang);
 
-    // Type guard for objects with properties
-    const isErrorObject = (err: unknown): err is Record<string, unknown> => {
-      return typeof err === "object" && err !== null;
-    };
+  const { signIn } = useSignIn(lang);
+  const { signUp } = useSignUp(lang);
 
-    // Network errors
-    if (
-      isError(error) &&
-      error.name === "TypeError" &&
-      error.message.includes("fetch")
-    ) {
-      return lang === "en"
-        ? "Network error. Please check your connection and try again."
-        : "Помилка мережі. Перевірте підключення та спробуйте ще раз.";
-    }
-
-    // Timeout errors
-    if (
-      isError(error) &&
-      (error.name === "AbortError" || error.message?.includes("timeout"))
-    ) {
-      return lang === "en"
-        ? "Request timed out. Please try again."
-        : "Час очікування вичерпано. Спробуйте ще раз.";
-    }
-
-    // Rate limiting
-    if (isErrorObject(error) && error.status === 429) {
-      return lang === "en"
-        ? "Too many attempts. Please wait a few minutes before trying again."
-        : "Забагато спроб. Зачекайте кілька хвилин перед повторною спробою.";
-    }
-
-    // Server errors
-    if (
-      isErrorObject(error) &&
-      typeof error.status === "number" &&
-      error.status >= 500
-    ) {
-      return lang === "en"
-        ? "Server error. Please try again later."
-        : "Помилка сервера. Спробуйте пізніше.";
-    }
-
-    // Authentication specific errors (better-auth generic handling)
-    if (context === "signin") {
-      if (typeof error === "string") {
-        return error;
-      }
-      if (isErrorObject(error) && typeof error.message === "string") {
-        return error.message;
-      }
-    }
-
-    // Registration specific errors
-    if (context === "register" && isErrorObject(error)) {
-      const errorStr = typeof error.error === "string" ? error.error : "";
-      const messageStr = typeof error.message === "string" ? error.message : "";
-      const codeStr = typeof error.code === "string" ? error.code : "";
-
-      // Prefer structured error codes from the API when available
-      switch (codeStr) {
-        case "USER_ALREADY_EXISTS":
-          return lang === "en"
-            ? "This email is already registered. Please use a different email or sign in."
-            : "Цей email вже зареєстрований. Використайте інший email або увійдіть.";
-        case "VALIDATION_ERROR":
-          return lang === "en"
-            ? "Please check your input data and try again."
-            : "Перевірте введені дані та спробуйте ще раз.";
-        case "SIGN_IN_AFTER_REGISTER_FAILED":
-        case "INTERNAL_SERVER_ERROR":
-          return lang === "en"
-            ? "Server error during registration. Please try again later."
-            : "Помилка сервера під час реєстрації. Спробуйте пізніше.";
-        default:
-          break;
-      }
-
-      // Fallback to string inspection if no code is present
-      if (errorStr.includes("email") || messageStr.includes("email")) {
-        return lang === "en"
-          ? "This email is already registered. Please use a different email or sign in."
-          : "Цей email вже зареєстрований. Використайте інший email або увійдіть.";
-      }
-      if (
-        errorStr.includes("validation") ||
-        messageStr.includes("validation")
-      ) {
-        return lang === "en"
-          ? "Please check your input data and try again."
-          : "Перевірте введені дані та спробуйте ще раз.";
-      }
-    }
-
-    // Generic fallback
-    let errorMessage = "";
-    if (isErrorObject(error)) {
-      errorMessage =
-        (typeof error.error === "string" ? error.error : "") ||
-        (typeof error.message === "string" ? error.message : "");
-    } else if (isError(error)) {
-      errorMessage = error.message;
-    }
-
-    return (
-      errorMessage ||
-      (lang === "en"
-        ? `${context === "register" ? "Registration" : "Authentication"} failed. Please try again.`
-        : `${context === "register" ? "Реєстрація" : "Авторизація"} не вдалася. Спробуйте ще раз.`)
-    );
-  };
-
-  const handleRetry = async (
+  const handleRegisterSubmit = async (
     data: z.infer<ReturnType<typeof authFormSchema>>
   ) => {
-    if (retryCount < 2) {
-      setRetryCount((prev) => prev + 1);
-      toast.info(lang === "en" ? "Retrying..." : "Повторна спроба...");
-      await new Promise((resolve) => setTimeout(resolve, 1000 * retryCount)); // Exponential backoff
-      return onSubmit(data);
+    const result = await signUp({
+      email: data.email,
+      password: data.password,
+      name: data.name || "",
+    });
+
+    if (!result.ok) {
+      toast.error(
+        result.message ??
+          getErrorMessage("Registration failed. Please try again.", "register")
+      );
+      return;
     }
-    return false;
+
+    // Success: user is automatically signed in
+    toast.success(lang === "en" ? "Welcome!" : "Ласкаво просимо!");
+    router.push(callbackUrl);
+    router.refresh();
+  };
+
+  const handleSignInSubmit = async (
+    data: z.infer<ReturnType<typeof authFormSchema>>
+  ) => {
+    const result = await signIn({
+      email: data.email,
+      password: data.password,
+      callbackUrl,
+      rememberMe: data.rememberMe,
+    });
+
+    if (!result.ok) {
+      toast.error(
+        result.message ??
+          getErrorMessage("Authentication failed. Please try again.", "signin")
+      );
+      return;
+    }
+
+    // Success
+    toast.success(lang === "en" ? "Welcome back!" : "Ласкаво просимо!");
+    router.push(callbackUrl);
+    router.refresh();
   };
 
   const onSubmit = async (data: z.infer<ReturnType<typeof authFormSchema>>) => {
@@ -193,68 +112,15 @@ export function AuthForm({ type, lang }: AuthFormProps) {
       setIsLoading(true);
 
       if (type === "register") {
-        const { error } = await authClient.signUp.email({
-          email: data.email,
-          password: data.password,
-          name: data.name || "",
-        });
-
-        if (error) {
-          const errorMessage = getErrorMessage(
-            error.message ?? "Registration failed. Please try again.",
-            "register"
-          );
-          toast.error(errorMessage);
-          return;
-        }
-
-        // Reset retry count on success
-        setRetryCount(0);
-        setShowSuccessModal(true);
-        toast.success(
-          lang === "en"
-            ? "Registration successful! You can now sign in."
-            : "Реєстрація успішна! Тепер ви можете увійти."
-        );
-        return;
+        await handleRegisterSubmit(data);
+      } else {
+        await handleSignInSubmit(data);
       }
-
-      // Sign in flow with better-auth
-      const { error } = await authClient.signIn.email({
-        email: data.email,
-        password: data.password,
-        callbackURL: callbackUrl,
-        rememberMe: data.rememberMe,
-      });
-
-      if (error) {
-        const errorMessage = getErrorMessage(
-          error.message ?? "Authentication failed. Please try again.",
-          "signin"
-        );
-        toast.error(errorMessage);
-        return;
-      }
-
-      // Reset retry count on success
-      setRetryCount(0);
-      toast.success(lang === "en" ? "Welcome back!" : "Ласкаво просимо!");
-      router.push(callbackUrl);
-      router.refresh();
     } catch (error: unknown) {
       console.error("Auth error:", error);
       const errorMessage = getErrorMessage(error, type);
 
       toast.error(errorMessage);
-
-      // Offer retry for network errors
-      if (
-        error instanceof Error &&
-        (error.name === "TypeError" || error.name === "AbortError")
-      ) {
-        const retried = await handleRetry(data);
-        if (retried !== false) return;
-      }
     } finally {
       setIsLoading(false);
     }
@@ -482,12 +348,6 @@ export function AuthForm({ type, lang }: AuthFormProps) {
           </Link>
         </div>
       )}
-
-      <SuccessRegistrationModal
-        isOpen={showSuccessModal}
-        onClose={() => setShowSuccessModal(false)}
-        lang={lang}
-      />
     </div>
   );
 }

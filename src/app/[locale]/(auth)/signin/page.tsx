@@ -2,10 +2,12 @@ import { AuthError } from "@/components/auth/auth-error";
 import { AuthForm } from "@/components/auth/auth-form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Locale } from "@/i18n/routing";
+import { requireUnAuth } from "@/utils/auth-guard";
 
 type Params = Promise<{ locale: Locale }>;
 
 export default async function SignInPage(props: { params: Params }) {
+  await requireUnAuth();
   const { locale } = await props.params;
 
   return (
