@@ -22,13 +22,14 @@ export const ChangeForm = () => {
 
   async function handleSubmit(values: ChangeNameValues) {
     try {
-      await fetch("/api/change-name", {
+      const res = await fetch("/api/change-name", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(values),
+        body: JSON.stringify({ name: values.name }),
       });
+      if (!res.ok) throw new Error(`Request failed with ${res.status}`);
       toast.success(t("changeName.message"));
       // better-auth session will be refreshed on next navigation; no client update
     } catch (error) {

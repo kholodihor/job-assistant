@@ -1,11 +1,13 @@
+import { AuthError } from "@/components/auth/auth-error";
 import { AuthForm } from "@/components/auth/auth-form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-
-type Locale = "en" | "ua";
+import { Locale } from "@/i18n/routing";
+import { requireUnAuth } from "@/utils/auth-guard";
 
 type Params = Promise<{ locale: Locale }>;
 
 export default async function RegisterPage(props: { params: Params }) {
+  await requireUnAuth();
   const { locale } = await props.params;
 
   return (
@@ -17,6 +19,7 @@ export default async function RegisterPage(props: { params: Params }) {
           </CardTitle>
         </CardHeader>
         <CardContent className="p-0">
+          <AuthError />
           <AuthForm lang={locale} type="register" />
         </CardContent>
       </Card>

@@ -1,29 +1,7 @@
 "use server";
 
-import { GoogleGenerativeAI } from "@google/generative-ai";
-import { env } from "@/env";
-
-// Initialize the API client with a function to ensure fresh instance
-function initializeGeminiAPI() {
-  try {
-    const apiKey = env.GEMINI_API_KEY;
-    console.log("API Key configured:", !!apiKey, "Length:", apiKey?.length);
-
-    if (!apiKey) {
-      throw new Error("Gemini API key is not configured");
-    }
-
-    const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
-    console.log("Gemini model initialized successfully");
-    return model;
-  } catch (error) {
-    console.error("Error initializing Gemini API:", error);
-    throw new Error(
-      `Failed to initialize Gemini API: ${error instanceof Error ? error.message : "Unknown error"}`
-    );
-  }
-}
+import { requireSessionUser } from "@/lib/api";
+import { getGeminiModel } from "@/lib/gemini";
 
 export async function generateTextGemini(
   letterData: {
@@ -41,6 +19,8 @@ export async function generateTextGemini(
   },
   locale: string = "en"
 ) {
+  await requireSessionUser();
+
   const prompt =
     locale === "ua"
       ? `Створіть текст супровідного листа українською мовою на основі наступних даних:
@@ -115,21 +95,6 @@ With my expertise in [key skills], I am confident in my ability to contribute ef
 **Generate a unique professional cover letter without modifying the given data.**`;
 
   try {
-    // Initialize a fresh model instance for each request
-    const model = initializeGeminiAPI();
-    console.log("Model initialized with new instance");
-
-    console.log("Starting text generation with data:", {
-      fullName: letterData.fullName,
-      profession: letterData.profession,
-      position: letterData.position,
-      company: letterData.company,
-      nameRecipient: letterData.nameRecipient,
-      skillsCount: letterData.skills?.length,
-      workExperienceCount: letterData.workExperience?.length,
-      locale,
-    });
-
     if (
       !letterData.fullName ||
       !letterData.profession ||
@@ -139,18 +104,11 @@ With my expertise in [key skills], I am confident in my ability to contribute ef
       throw new Error("Missing required fields for text generation");
     }
 
-    // Model is already initialized and tested
-    console.log("Model initialized");
+    const model = getGeminiModel({ model: "gemini-2.0-flash" });
 
-    console.log("Generating content with prompt length:", prompt.length);
     const result = await model.generateContent(prompt);
-    console.log("Content generated, getting response");
-
     const response = await result.response;
-    console.log("Got response, extracting text");
-
     const text = response.text();
-    console.log("Text extracted, length:", text.length);
 
     if (!text) {
       throw new Error("Generated text is empty");

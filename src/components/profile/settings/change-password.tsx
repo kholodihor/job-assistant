@@ -12,14 +12,11 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Locale } from "@/i18n/routing";
-import { useSession } from "@/lib/auth-client";
 import { ChangePasswordValues, changePasswordSchema } from "./schema";
 
 export const ChangePassword = () => {
   const t = useTranslations("Settings");
   const lang = useLocale() as Locale;
-  const { data: session } = useSession();
-  const token = session?.user.id;
 
   const form = useForm<ChangePasswordValues>({
     resolver: zodResolver(changePasswordSchema(lang)),
@@ -38,13 +35,12 @@ export const ChangePassword = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          idUser: token,
-          ...values,
+          oldPassword: values.oldPassword,
+          newPassword: values.newPassword,
         }),
       });
-      if (res.ok) {
-        form.reset();
-      }
+      if (!res.ok) throw new Error(`Request failed with ${res.status}`);
+      form.reset();
       toast.success(t("ChangePassword.message"));
     } catch (error) {
       toast.error(t("ChangePassword.error"));

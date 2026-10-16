@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
-import { useStorage } from "@/hooks/use-storage";
+import { getStorageData, setStorageData } from "@/hooks/use-storage";
 import { IResume } from "@/types/resume";
 
 interface DuplicatedResume {
@@ -14,13 +14,11 @@ const STORAGE_KEYS = {
 } as const;
 
 export const useCachedResumes = (t: (key: string) => string) => {
-  const { getStorageData, setStorageData } = useStorage();
-
   // State
   const [resumes, setResumes] = useState<IResume[]>([]);
   const [duplicatedResumes, setDuplicatedResumes] = useState<
     DuplicatedResume[]
-  >(getStorageData(STORAGE_KEYS.DUPLICATED, []));
+  >(() => getStorageData(STORAGE_KEYS.DUPLICATED, []));
   const [isLoading, setIsLoading] = useState(true);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isDeletingId, setIsDeletingId] = useState<string | null>(null);
@@ -160,19 +158,16 @@ export const useCachedResumes = (t: (key: string) => string) => {
         });
       }
     },
-    [t, setStorageData]
+    [t]
   );
 
-  const handleDeleteDuplicate = useCallback(
-    (id: string) => {
-      setDuplicatedResumes((prev) => {
-        const newResumes = prev.filter((resume) => resume.id !== id);
-        setStorageData(STORAGE_KEYS.DUPLICATED, newResumes);
-        return newResumes;
-      });
-    },
-    [setStorageData]
-  );
+  const handleDeleteDuplicate = useCallback((id: string) => {
+    setDuplicatedResumes((prev) => {
+      const newResumes = prev.filter((resume) => resume.id !== id);
+      setStorageData(STORAGE_KEYS.DUPLICATED, newResumes);
+      return newResumes;
+    });
+  }, []);
 
   const handleDeleteResume = useCallback(
     async (id: string) => {
@@ -265,7 +260,7 @@ export const useCachedResumes = (t: (key: string) => string) => {
         });
       }
     },
-    [t, duplicatedResumes, setStorageData]
+    [t, duplicatedResumes]
   );
 
   // Initial data fetch

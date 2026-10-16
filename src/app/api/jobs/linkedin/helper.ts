@@ -1,17 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { type Browser, type Page } from "puppeteer";
 import { type Browser as BrowserCore } from "puppeteer-core";
-import { getUserLocation } from "@/lib/get-user-location";
+import { blockHeavyResources } from "../browser";
 
 export async function searchForKeyword(
   browser: Browser | BrowserCore,
-  keyword: string
+  keyword: string,
+  location: string
 ) {
   const page = (await browser.newPage()) as Page;
 
   try {
-    console.log("Starting LinkedIn job search for:", keyword);
-
     // Set a realistic viewport and user agent
     await page.setViewport({ width: 1920, height: 1080 });
     await page.setUserAgent(
@@ -31,39 +30,16 @@ export async function searchForKeyword(
       });
     });
 
-    // Get user's location from our utility function
-    const location = await getUserLocation();
-    const country = location.country;
-
     // Set shorter timeout and optimize page load
     await page.setDefaultTimeout(20000);
     await page.setJavaScriptEnabled(true);
 
     // Block unnecessary resources to speed up loading
-    await page.setRequestInterception(true);
-    page.on("request", (request) => {
-      const resourceType = request.resourceType();
-      if (
-        resourceType === "image" ||
-        resourceType === "stylesheet" ||
-        resourceType === "font" ||
-        resourceType === "media"
-      ) {
-        request.abort();
-      } else {
-        const headers = request.headers();
-        headers["Accept-Language"] = "en-US,en;q=0.9";
-        headers["Accept"] =
-          "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8";
-        request.continue({ headers });
-      }
-    });
+    await blockHeavyResources(page, "en-US,en;q=0.9");
 
     // Add location to search URL
-    const searchUrl = `https://www.linkedin.com/jobs/search/?keywords=${encodeURIComponent(keyword)}&location=${encodeURIComponent(country)}`;
-    console.log(`Searching LinkedIn jobs at: ${searchUrl}`);
+    const searchUrl = `https://www.linkedin.com/jobs/search/?keywords=${encodeURIComponent(keyword)}&location=${encodeURIComponent(location)}`;
 
-    console.log("Attempting to navigate to:", searchUrl);
     try {
       await page.goto(searchUrl, {
         waitUntil: "domcontentloaded", // Changed from networkidle0 to be less strict
@@ -78,27 +54,6 @@ export async function searchForKeyword(
       });
     }
 
-    // Log the current URL to debug redirects
-    const currentUrl = await page.url();
-    console.log("Current page URL:", currentUrl);
-
-    // Take a screenshot in production for debugging
-    if (
-      process.env.NODE_ENV === "production" ||
-      process.env.VERCEL_ENV === "production"
-    ) {
-      try {
-        const screenshot = await page.screenshot();
-        console.log("Screenshot taken, size:", screenshot.length, "bytes");
-      } catch (screenshotError) {
-        console.error("Screenshot error:", screenshotError);
-      }
-    }
-
-    // Check the page content and status
-    const pageContent = await page.content();
-    console.log("Page content length:", pageContent.length);
-
     // First check if we're redirected to login page
     const isLoginPage = await page.evaluate(() => {
       const url = window.location.href;
@@ -109,10 +64,7 @@ export async function searchForKeyword(
       return isLogin;
     });
 
-    console.log("Is login page:", isLoginPage);
-
     if (isLoginPage) {
-      console.log("LinkedIn requires authentication. Returning empty results.");
       return [];
     }
 
@@ -127,13 +79,11 @@ export async function searchForKeyword(
     ];
 
     let foundSelector = null;
-    console.log("Checking selectors...");
     for (const selector of selectors) {
       try {
         const element = await page.$(selector);
         if (element) {
           foundSelector = selector;
-          console.log("Found working selector:", selector);
           break;
         }
       } catch (selectorError) {
@@ -142,7 +92,6 @@ export async function searchForKeyword(
     }
 
     if (!foundSelector) {
-      console.log("No job listings found with known selectors");
       return [];
     }
 

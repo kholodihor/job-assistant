@@ -22,6 +22,8 @@ export const MobilePreview = ({
   const t = useTranslations(
     componentType === "resume" ? "ResumePage" : "CoverLetterPage"
   );
+  const ResumeTemplate = renderResumeTemplate(template);
+  const LetterTemplate = renderLetterTemplate(template);
 
   return (
     <div className="absolute left-0 top-0 z-50 h-full w-full bg-white/70 backdrop-blur-sm xl:hidden">
@@ -43,10 +45,12 @@ export const MobilePreview = ({
       <div className="no-scrollbar h-[calc(100vh-56px)] overflow-y-auto">
         <div className="mx-auto flex justify-center p-3">
           <div className="w-full max-w-[800px]">
-            {componentType === "resume"
-              ? renderResumeTemplate(template)({ data: data })
-              : // @ts-expect-error type error
-                renderLetterTemplate(template)({ data: data })}
+            {componentType === "resume" ? (
+              <ResumeTemplate data={data} />
+            ) : (
+              // @ts-expect-error type error
+              <LetterTemplate data={data} />
+            )}
           </div>
         </div>
       </div>

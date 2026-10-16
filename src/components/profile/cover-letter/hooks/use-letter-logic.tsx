@@ -1,8 +1,6 @@
-import { useEffect, useRef, useState } from "react";
+import { useMemo } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { toast } from "sonner";
 import { useCachedLetters } from "@/components/profile/cover-letter/hooks/use-letters";
-import { PrintPreview } from "@/components/profile/cover-letter/print-preview";
 import { useAlert } from "@/contexts/alert-context";
 import { ILetter } from "@/types/letter";
 
@@ -23,21 +21,7 @@ export const useLetterLogic = () => {
     handleDeleteDuplicate,
     handleDeleteLetter,
     handleTitleChange,
-    refreshLetters,
   } = useCachedLetters(t);
-
-  const letterRef = useRef<HTMLDivElement>(null);
-  const [isPrinting, setIsPrinting] = useState(false);
-  const [currentLetter, setCurrentLetter] = useState<ILetter | null>(null);
-
-  const reactToPrintFn = (letter: ILetter) => {
-    setCurrentLetter(letter);
-    setIsPrinting(true);
-  };
-
-  useEffect(() => {
-    refreshLetters();
-  }, [refreshLetters]);
 
   const handleDelete = (id: string, isDuplicate = false) => {
     if (isDuplicate) {
@@ -62,9 +46,6 @@ export const useLetterLogic = () => {
 
   const handleDuplicateLetter = (letter: ILetter) => {
     handleDuplicate({ ...letter });
-    toast.success(t("messages.duplicateCreated"), {
-      duration: 3000,
-    });
   };
 
   const getLetterData = (letter: LetterWithDuplicate) => {
@@ -74,41 +55,27 @@ export const useLetterLogic = () => {
     return { ...letter };
   };
 
-  const allLetters = [
-    ...letters,
-    ...duplicatedLetters.map((dr) => ({
-      id: dr.id,
-      title: dr.title,
-      data: dr.data,
-      isDuplicate: true,
-    })),
-  ];
+  const allLetters = useMemo(
+    () => [
+      ...letters,
+      ...duplicatedLetters.map((dr) => ({
+        id: dr.id,
+        title: dr.title,
+        data: dr.data,
+        isDuplicate: true,
+      })),
+    ],
+    [letters, duplicatedLetters]
+  );
 
   return {
     t,
-    letterRef,
     locale,
     allLetters,
     isLoading,
-    isDeleting,
-    reactToPrintFn,
-    showAlert,
-    handleDuplicate,
     handleTitleChange,
-    handleDelete,
-    refreshLetters,
     getLetterData,
     handleDeleteClick,
     handleDuplicateLetter,
-    printComponent:
-      isPrinting && currentLetter ? (
-        <PrintPreview
-          letter={currentLetter}
-          onPrintComplete={() => {
-            setIsPrinting(false);
-            setCurrentLetter(null);
-          }}
-        />
-      ) : null,
   };
 };

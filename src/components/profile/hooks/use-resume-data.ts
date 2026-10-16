@@ -1,7 +1,7 @@
-import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { initialData } from "@/components/profile/resume/editor/forms/initialdata";
+import { useRouter } from "@/i18n/routing";
 import { ResumeData } from "@/types/resume";
 
 const STORAGE_KEY = "resumeData";
@@ -38,55 +38,64 @@ const validateRequiredFields = (data: ResumeData): void => {
 
 // Custom hook for managing resume data with localStorage
 export const useResumeData = (resumeId?: string) => {
-  const [isClient, setIsClient] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
   const [resumeData, setResumeData] = useState<ResumeData>(initialData);
   const [isSaving, setIsSaving] = useState(false);
   const [isSavingToDb, setIsSavingToDb] = useState(false);
   const router = useRouter();
 
-  // Initialize client-side data
+  // Load the existing resume (edit mode) or the local draft (create mode)
   useEffect(() => {
-    setIsClient(true);
-    if (resumeId) {
-      // If we have a resume ID, fetch that resume's data
-      const fetchResume = async () => {
-        try {
-          const response = await fetch(`/api/resumes/${resumeId}`);
-          if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.message || "Failed to fetch resume");
-          }
-          const resume = await response.json();
-          // The resume data is directly in the response, not in a data property
-
-          console.log("str 62 resume-data-> resume", resume);
-          setResumeData(resume);
-        } catch (error) {
-          console.error("Error fetching resume:", error);
-          toast.error("Failed to load resume data");
-        }
-      };
-      fetchResume();
-    } else {
-      // Otherwise load from localStorage
+    if (!resumeId) {
       const savedData = localStorage.getItem(STORAGE_KEY);
       if (savedData) {
-        setResumeData(JSON.parse(savedData));
+        try {
+          setResumeData(JSON.parse(savedData));
+        } catch {
+          if (!resumeId) localStorage.removeItem(STORAGE_KEY);
+        }
       }
+      setIsInitialized(true);
+      return;
     }
+
+    setIsInitialized(false);
+    const controller = new AbortController();
+    const fetchResume = async () => {
+      try {
+        const response = await fetch(`/api/resumes/${resumeId}`, {
+          signal: controller.signal,
+        });
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.message || "Failed to fetch resume");
+        }
+        const resume = await response.json();
+        setResumeData(resume);
+      } catch (error) {
+        if (controller.signal.aborted) return;
+        console.error("Error fetching resume:", error);
+        toast.error("Failed to load resume data");
+      } finally {
+        if (!controller.signal.aborted) setIsInitialized(true);
+      }
+    };
+    fetchResume();
+    return () => controller.abort();
   }, [resumeId]);
 
   // Save data to localStorage with debounce
   const updateResumeData = useCallback(
     (newData: ResumeData) => {
       setResumeData(newData);
-      if (isClient) {
+      // Only persist a draft for new documents; edits are saved to the DB
+      if (!resumeId) {
         setIsSaving(true);
         localStorage.setItem(STORAGE_KEY, JSON.stringify(newData));
         setTimeout(() => setIsSaving(false), 500);
       }
     },
-    [isClient]
+    [resumeId]
   );
 
   // Update resume data with Cloudinary info
@@ -134,7 +143,7 @@ export const useResumeData = (resumeId?: string) => {
 
       toast.success("Resume saved successfully");
 
-      localStorage.removeItem(STORAGE_KEY);
+      if (!resumeId) localStorage.removeItem(STORAGE_KEY);
       router.push("/profile/resume");
     } catch (error) {
       toast.error(
@@ -149,7 +158,7 @@ export const useResumeData = (resumeId?: string) => {
     resumeData,
     updateResumeData,
     saveToDatabase,
-    isInitialized: isClient,
+    isInitialized,
     isSaving,
     isSavingToDb,
   };

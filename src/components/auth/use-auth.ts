@@ -34,11 +34,7 @@ export const useSignIn = (lang: Locale) => {
     if (error) {
       return {
         ok: false as const,
-        message: getAuthErrorMessage(
-          error.message ?? "Authentication failed. Please try again.",
-          "signin",
-          lang
-        ),
+        message: getAuthErrorMessage(error, "signin", lang),
       };
     }
 
@@ -59,11 +55,7 @@ export const useSignUp = (lang: Locale) => {
     if (error) {
       return {
         ok: false as const,
-        message: getAuthErrorMessage(
-          error.message ?? "Registration failed. Please try again.",
-          "register",
-          lang
-        ),
+        message: getAuthErrorMessage(error, "register", lang),
       };
     }
 

@@ -1,6 +1,15 @@
 "use client";
 
-import React, { ReactNode, createContext, useContext, useState } from "react";
+import {
+  ReactNode,
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { Alert } from "@/components/shared/alert";
 
 interface AlertOptions {
@@ -25,35 +34,51 @@ const AlertContext = createContext<AlertContextType | undefined>(undefined);
 export const AlertProvider = ({ children }: { children: ReactNode }) => {
   const [alertOptions, setAlertOptions] = useState<AlertOptions | null>(null);
   const [isOpen, setIsOpen] = useState(false);
+  const hideTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const showAlert = (options: AlertOptions) => {
+  const clearHideTimeout = () => {
+    if (hideTimeoutRef.current) {
+      clearTimeout(hideTimeoutRef.current);
+      hideTimeoutRef.current = null;
+    }
+  };
+
+  useEffect(() => clearHideTimeout, []);
+
+  const showAlert = useCallback((options: AlertOptions) => {
+    // Don't let a pending hide from a previous alert wipe this one
+    clearHideTimeout();
     setAlertOptions(options);
     setIsOpen(true);
-  };
+  }, []);
 
-  const hideAlert = () => {
+  const hideAlert = useCallback(() => {
     setIsOpen(false);
-    setTimeout(() => {
+    clearHideTimeout();
+    // Keep the content mounted while the close animation plays
+    hideTimeoutRef.current = setTimeout(() => {
+      hideTimeoutRef.current = null;
       setAlertOptions(null);
     }, 200);
-  };
+  }, []);
 
   const handleCancel = () => {
-    if (alertOptions?.onCancel) {
-      alertOptions.onCancel();
-    }
+    alertOptions?.onCancel?.();
     hideAlert();
   };
 
   const handleConfirm = () => {
-    if (alertOptions?.onConfirm) {
-      alertOptions.onConfirm();
-    }
+    alertOptions?.onConfirm();
     hideAlert();
   };
 
+  const value = useMemo(
+    () => ({ showAlert, hideAlert }),
+    [showAlert, hideAlert]
+  );
+
   return (
-    <AlertContext.Provider value={{ showAlert, hideAlert }}>
+    <AlertContext.Provider value={value}>
       {children}
       {alertOptions && (
         <Alert

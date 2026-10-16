@@ -1,8 +1,7 @@
 "use server";
 
-import { GoogleGenerativeAI } from "@google/generative-ai";
-
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
+import { requireSessionUser } from "@/lib/api";
+import { getGeminiModel } from "@/lib/gemini";
 
 export async function checkAnswer(
   question: string,
@@ -11,8 +10,10 @@ export async function checkAnswer(
   techStack: string[],
   locale: string = "en"
 ) {
+  await requireSessionUser();
+
   try {
-    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+    const model = getGeminiModel({ model: "gemini-2.0-flash" });
 
     const prompt =
       locale === "ua"

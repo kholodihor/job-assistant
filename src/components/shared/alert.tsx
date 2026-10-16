@@ -35,19 +35,28 @@ export const Alert = ({
   onCancel,
   open = false,
 }: AlertProps) => {
-  if (!open) return null;
-
   return (
-    <AlertDialog defaultOpen={true}>
+    <AlertDialog
+      open={open}
+      onOpenChange={(nextOpen) => {
+        // Escape, overlay and the Cancel button all close through here
+        if (!nextOpen) onCancel?.();
+      }}
+    >
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>{title}</AlertDialogTitle>
           <AlertDialogDescription>{description}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel onClick={onCancel}>{cancelText}</AlertDialogCancel>
+          <AlertDialogCancel>{cancelText}</AlertDialogCancel>
           <AlertDialogAction
-            onClick={onConfirm}
+            onClick={(event) => {
+              // Prevent Radix's auto-close (which would fire onOpenChange ->
+              // onCancel); the parent closes the dialog after confirming.
+              event.preventDefault();
+              onConfirm();
+            }}
             className={cn(
               variant === "destructive" &&
                 "border-red-400 bg-red-400 hover:border-red-600 hover:bg-red-600",

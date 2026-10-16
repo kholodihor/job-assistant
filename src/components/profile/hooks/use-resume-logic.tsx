@@ -1,7 +1,5 @@
-import { useEffect, useRef, useState } from "react";
+import { useMemo } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { toast } from "sonner";
-import { PrintPreview } from "@/components/profile/shared/preview/print-preview";
 import { useAlert } from "@/contexts/alert-context";
 import { IResume } from "@/types/resume";
 import { useCachedResumes } from "./use-resumes";
@@ -23,21 +21,7 @@ export const useResumeLogic = () => {
     handleDeleteDuplicate,
     handleDeleteResume,
     handleTitleChange,
-    refreshResumes,
   } = useCachedResumes(t);
-
-  const resumeRef = useRef<HTMLDivElement>(null);
-  const [isPrinting, setIsPrinting] = useState(false);
-  const [currentResume, setCurrentResume] = useState<IResume | null>(null);
-
-  const reactToPrintFn = (resume: IResume) => {
-    setCurrentResume(resume);
-    setIsPrinting(true);
-  };
-
-  useEffect(() => {
-    refreshResumes();
-  }, [refreshResumes]);
 
   const handleDelete = (id: string, isDuplicate = false) => {
     if (isDuplicate) {
@@ -61,74 +45,47 @@ export const useResumeLogic = () => {
   };
 
   const handleDuplicateResume = (resume: IResume) => {
-    const processedResume: IResume = {
+    handleDuplicate({
       ...resume,
       workExperiences: resume.workExperiences || [],
       educations: resume.educations || [],
       languages: resume.languages || [],
       skills: resume.skills || [],
-    };
-
-    handleDuplicate(processedResume);
-    toast.success(t("messages.duplicateCreated"), {
-      duration: 3000,
     });
   };
 
   const getResumeData = (resume: ResumeWithDuplicate) => {
-    if ("data" in resume) {
-      return {
-        ...resume.data,
-        workExperiences: resume.data.workExperiences || [],
-        educations: resume.data.educations || [],
-        languages: resume.data.languages || [],
-        skills: resume.data.skills || [],
-      };
-    }
+    const data = "data" in resume ? resume.data : resume;
     return {
-      ...resume,
-      workExperiences: resume.workExperiences || [],
-      educations: resume.educations || [],
-      languages: resume.languages || [],
-      skills: resume.skills || [],
+      ...data,
+      workExperiences: data.workExperiences || [],
+      educations: data.educations || [],
+      languages: data.languages || [],
+      skills: data.skills || [],
     };
   };
 
-  const allResumes = [
-    ...resumes,
-    ...duplicatedResumes.map((dr) => ({
-      id: dr.id,
-      title: dr.title,
-      data: dr.data,
-      isDuplicate: true,
-    })),
-  ];
+  const allResumes = useMemo(
+    () => [
+      ...resumes,
+      ...duplicatedResumes.map((dr) => ({
+        id: dr.id,
+        title: dr.title,
+        data: dr.data,
+        isDuplicate: true,
+      })),
+    ],
+    [resumes, duplicatedResumes]
+  );
 
   return {
     t,
-    resumeRef,
     locale,
     allResumes,
     isLoading,
-    isDeleting,
-    reactToPrintFn,
-    showAlert,
-    handleDuplicate,
     handleTitleChange,
-    handleDelete,
-    refreshResumes,
     getResumeData,
     handleDeleteClick,
     handleDuplicateResume,
-    printComponent:
-      isPrinting && currentResume ? (
-        <PrintPreview
-          resume={currentResume}
-          onPrintComplete={() => {
-            setIsPrinting(false);
-            setCurrentResume(null);
-          }}
-        />
-      ) : null,
   };
 };

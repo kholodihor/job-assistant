@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
-import { useStorage } from "@/hooks/use-storage";
+import { getStorageData, setStorageData } from "@/hooks/use-storage";
 import { ILetter } from "@/types/letter";
 
 interface DuplicatedLetter {
@@ -14,13 +14,11 @@ const STORAGE_LETTER_KEYS = {
 } as const;
 
 export const useCachedLetters = (t: (key: string) => string) => {
-  const { getStorageData, setStorageData } = useStorage();
-
   // State
   const [letters, setLetters] = useState<ILetter[]>([]);
   const [duplicatedLetters, setDuplicatedLetters] = useState<
     DuplicatedLetter[]
-  >(getStorageData(STORAGE_LETTER_KEYS.DUPLICATED, []));
+  >(() => getStorageData(STORAGE_LETTER_KEYS.DUPLICATED, []));
   const [isLoading, setIsLoading] = useState(true);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isDeletingId, setIsDeletingId] = useState<string | null>(null);
@@ -120,19 +118,16 @@ export const useCachedLetters = (t: (key: string) => string) => {
         });
       }
     },
-    [t, setStorageData]
+    [t]
   );
 
-  const handleDeleteDuplicate = useCallback(
-    (id: string) => {
-      setDuplicatedLetters((prev) => {
-        const newLetters = prev.filter((letter) => letter.id !== id);
-        setStorageData(STORAGE_LETTER_KEYS.DUPLICATED, newLetters);
-        return newLetters;
-      });
-    },
-    [setStorageData]
-  );
+  const handleDeleteDuplicate = useCallback((id: string) => {
+    setDuplicatedLetters((prev) => {
+      const newLetters = prev.filter((letter) => letter.id !== id);
+      setStorageData(STORAGE_LETTER_KEYS.DUPLICATED, newLetters);
+      return newLetters;
+    });
+  }, []);
 
   const handleDeleteLetter = useCallback(
     async (id: string) => {
@@ -225,7 +220,7 @@ export const useCachedLetters = (t: (key: string) => string) => {
         });
       }
     },
-    [t, duplicatedLetters, setStorageData]
+    [t, duplicatedLetters]
   );
 
   // Initial data fetch

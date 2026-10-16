@@ -1,7 +1,7 @@
-import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { initialData } from "@/components/profile/cover-letter/editor/forms/initialdata";
+import { useRouter } from "@/i18n/routing";
 import { LetterData } from "@/types/letter";
 
 const STORAGE_LETTER_KEY = "letterData";
@@ -30,53 +30,64 @@ const validateRequiredFields = (data: LetterData): void => {
 
 // Custom hook for managing letter data with localStorage
 export const useLetterData = (letterId?: string) => {
-  const [isClient, setIsClient] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
   const [letterData, setLetterData] = useState<LetterData>(initialData);
   const [isSaving, setIsSaving] = useState(false);
   const [isSavingToDb, setIsSavingToDb] = useState(false);
   const router = useRouter();
 
-  // Initialize client-side data
+  // Load the existing letter (edit mode) or the local draft (create mode)
   useEffect(() => {
-    setIsClient(true);
-    if (letterId) {
-      // If we have a letter ID, fetch that letter's data
-      const fetchLetter = async () => {
-        try {
-          const response = await fetch(`/api/letters/${letterId}`);
-          if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.message || "Failed to fetch letter");
-          }
-          const letter = await response.json();
-          // The letter data is directly in the response, not in a data property
-          setLetterData(letter);
-        } catch (error) {
-          console.error("Error fetching letter:", error);
-          toast.error("Failed to load letter data");
-        }
-      };
-      fetchLetter();
-    } else {
-      // Otherwise load from localStorage
+    if (!letterId) {
       const savedData = localStorage.getItem(STORAGE_LETTER_KEY);
       if (savedData) {
-        setLetterData(JSON.parse(savedData));
+        try {
+          setLetterData(JSON.parse(savedData));
+        } catch {
+          if (!letterId) localStorage.removeItem(STORAGE_LETTER_KEY);
+        }
       }
+      setIsInitialized(true);
+      return;
     }
+
+    setIsInitialized(false);
+    const controller = new AbortController();
+    const fetchLetter = async () => {
+      try {
+        const response = await fetch(`/api/letters/${letterId}`, {
+          signal: controller.signal,
+        });
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.message || "Failed to fetch letter");
+        }
+        const letter = await response.json();
+        setLetterData(letter);
+      } catch (error) {
+        if (controller.signal.aborted) return;
+        console.error("Error fetching letter:", error);
+        toast.error("Failed to load letter data");
+      } finally {
+        if (!controller.signal.aborted) setIsInitialized(true);
+      }
+    };
+    fetchLetter();
+    return () => controller.abort();
   }, [letterId]);
 
   // Save data to localStorage with debounce
   const updateLetterData = useCallback(
     (newData: LetterData) => {
       setLetterData(newData);
-      if (isClient) {
+      // Only persist a draft for new documents; edits are saved to the DB
+      if (!letterId) {
         setIsSaving(true);
         localStorage.setItem(STORAGE_LETTER_KEY, JSON.stringify(newData));
         setTimeout(() => setIsSaving(false), 500);
       }
     },
-    [isClient]
+    [letterId]
   );
 
   // Update letter data with Cloudinary info
@@ -130,7 +141,7 @@ export const useLetterData = (letterId?: string) => {
 
       toast.success("Letter saved successfully");
 
-      localStorage.removeItem(STORAGE_LETTER_KEY);
+      if (!letterId) localStorage.removeItem(STORAGE_LETTER_KEY);
       router.push("/profile/cover-letter");
     } catch (error) {
       toast.error(
@@ -145,7 +156,7 @@ export const useLetterData = (letterId?: string) => {
     letterData,
     updateLetterData,
     saveToDatabase,
-    isInitialized: isClient,
+    isInitialized,
     isSaving,
     isSavingToDb,
   };

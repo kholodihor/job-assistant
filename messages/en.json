@@ -74,7 +74,12 @@
       "userNotFound": "User not found",
       "invalidCredentials": "Invalid email or password",
       "untrustedHost": "Authentication configuration error. Please try again later."
-    }
+    },
+    "passwordInput": {
+      "show": "Show password",
+      "hide": "Hide password"
+    },
+    "passwordHint": "The password must consist of 8 characters and contain numbers and Latin letters"
   },
   "404Page": {
     "homePage": "/en",
@@ -296,7 +301,8 @@
         "myProfile": "My Profile"
       },
       "account": "Account",
-      "exit": "Exit"
+      "exit": "Exit",
+      "closeMenu": "Close menu"
     }
   },
   "SharedHeader": {
@@ -307,6 +313,9 @@
     "images": {
       "logo": "Logo",
       "hamburger": "Menu"
+    },
+    "buttons": {
+      "openMenu": "Open menu"
     }
   },
   "ResumePage": {

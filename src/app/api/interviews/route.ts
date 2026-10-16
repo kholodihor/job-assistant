@@ -1,83 +1,46 @@
-"use server";
-
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { desc, eq } from "drizzle-orm";
 import { interviewFormSchema } from "@/components/profile/interview/forms/schema";
 import { db } from "@/db";
 import { interviews } from "@/db/schema";
-import { requireAuth } from "@/utils/auth-guard";
+import { getSessionUser, handleRouteError, unauthorized } from "@/lib/api";
 
-export async function POST(req: NextRequest) {
+export async function POST(req: Request) {
   try {
-    const { session } = await requireAuth();
-
-    if (!session) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const user = await getSessionUser();
+    if (!user) return unauthorized();
 
     const body = await req.json();
-    const { data } = body;
+    const data = interviewFormSchema.parse(body.data);
 
-    if (!data) {
-      return NextResponse.json(
-        { message: "Invalid interview data" },
-        { status: 400 }
-      );
-    }
+    const [interview] = await db
+      .insert(interviews)
+      .values({
+        jobPosition: data.position,
+        jobDescription: data.description,
+        jobExperience: data.yearsOfExperience,
+        techStack: data.techStack || [],
+        createdBy: user.id,
+      })
+      .returning();
 
-    try {
-      const validatedData = interviewFormSchema.parse(data);
-
-      // Insert interview
-      const [interview] = await db
-        .insert(interviews)
-        .values({
-          jobPosition: validatedData.position,
-          jobDescription: validatedData.description,
-          jobExperience: validatedData.yearsOfExperience,
-          techStack: validatedData.techStack || [],
-          createdBy: session.userId,
-        })
-        .returning();
-
-      return NextResponse.json(interview);
-    } catch (error) {
-      console.error("Validation error:", error);
-      return NextResponse.json(
-        { message: "Invalid interview data", error },
-        { status: 400 }
-      );
-    }
+    return NextResponse.json(interview);
   } catch (error) {
-    console.error("Error creating interview:", error);
-    return NextResponse.json(
-      { message: "Failed to create interview", error },
-      { status: 500 }
-    );
+    return handleRouteError(error, "Failed to create interview");
   }
 }
 
 export async function GET() {
   try {
-    const { session } = await requireAuth();
+    const user = await getSessionUser();
+    if (!user) return unauthorized();
 
-    if (!session) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    // Get all interviews for the user
-    const userInterviews = await db
-      .select()
-      .from(interviews)
-      .where(eq(interviews.createdBy, session.userId))
-      .orderBy(desc(interviews.createdAt));
-
+    const userInterviews = await db.query.interviews.findMany({
+      where: eq(interviews.createdBy, user.id),
+      orderBy: desc(interviews.createdAt),
+    });
     return NextResponse.json(userInterviews);
   } catch (error) {
-    console.error("Error fetching interviews:", error);
-    return NextResponse.json(
-      { message: "Failed to fetch interviews" },
-      { status: 500 }
-    );
+    return handleRouteError(error, "Failed to fetch interviews");
   }
 }

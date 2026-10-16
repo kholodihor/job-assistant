@@ -1,11 +1,11 @@
 "use client";
 
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import { FC } from "react";
 import { useTranslations } from "next-intl";
 import { Container } from "@/components/shared/container";
 import { useMedia } from "@/hooks/use-media";
+import { useRouter } from "@/i18n/routing";
 import { createStepsData } from "./data";
 
 export const Steps: FC = () => {

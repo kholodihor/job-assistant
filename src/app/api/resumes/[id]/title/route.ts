@@ -1,63 +1,40 @@
-import { NextRequest, NextResponse } from "next/server";
-import { and, eq, sql } from "drizzle-orm";
+import { NextResponse } from "next/server";
+import { and, eq } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "@/db";
 import { resumes } from "@/db/schema";
-import { requireAuth } from "@/utils/auth-guard";
+import {
+  getSessionUser,
+  handleRouteError,
+  notFound,
+  unauthorized,
+} from "@/lib/api";
 
 const updateTitleSchema = z.object({
   title: z.string().min(1).max(255),
 });
 
 export async function PATCH(
-  req: NextRequest,
+  req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { session } = await requireAuth();
-
-    if (!session) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
+    const user = await getSessionUser();
+    if (!user) return unauthorized();
     const { id } = await params;
-    const body = await req.json();
 
-    // Validate request body
-    const validatedData = updateTitleSchema.parse(body);
+    const { title } = updateTitleSchema.parse(await req.json());
 
-    // First check if resume exists and belongs to user
-    const resume = await db.query.resumes.findFirst({
-      where: and(eq(resumes.id, id), eq(resumes.userId, session.userId)),
-      columns: { id: true },
-    });
+    // Title edits deliberately leave updatedAt untouched.
+    const updated = await db
+      .update(resumes)
+      .set({ title })
+      .where(and(eq(resumes.id, id), eq(resumes.userId, user.id)))
+      .returning({ title: resumes.title });
+    if (!updated.length) return notFound("Resume not found");
 
-    if (!resume) {
-      return NextResponse.json(
-        { message: "Resume not found" },
-        { status: 404 }
-      );
-    }
-
-    // Update using raw SQL to avoid any timestamp issues
-    await db.execute(
-      sql`UPDATE resumes SET title = ${validatedData.title} WHERE id = ${id}`
-    );
-
-    // Return only the new title
-    return NextResponse.json({ title: validatedData.title });
+    return NextResponse.json({ title });
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        { message: "Invalid title", errors: error.errors },
-        { status: 400 }
-      );
-    }
-
-    console.error("Error updating resume title:", error);
-    return NextResponse.json(
-      { message: "Failed to update resume title", error },
-      { status: 500 }
-    );
+    return handleRouteError(error, "Failed to update resume title");
   }
 }

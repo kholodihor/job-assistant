@@ -45,7 +45,6 @@ export const Interviewer = () => {
 
   // State for interview data and dialog open state
   const [interviewData, setInterviewData] = useState<InterviewData[]>([]);
-  const [response, setResponse] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -66,7 +65,6 @@ export const Interviewer = () => {
       const response = await fetch("/api/interviews");
       if (response.ok) {
         const interviews = await response.json();
-        console.log("Fetched interviews:", interviews);
         if (interviews && interviews.length > 0) {
           // Transform the database format to the component format
           const formattedInterviews = interviews.map(
@@ -76,20 +74,15 @@ export const Interviewer = () => {
               jobExperience: number;
               techStack: string[];
               id: string;
-            }) => {
-              const formattedInterview = {
-                position: interview.jobPosition,
-                description: interview.jobDescription,
-                yearsOfExperience: interview.jobExperience,
-                techStack: interview.techStack,
-                id: interview.id,
-                // We don't have the questions here since we're not storing them
-              };
-              console.log("Formatted interview:", formattedInterview);
-              return formattedInterview;
-            }
+            }) => ({
+              position: interview.jobPosition,
+              description: interview.jobDescription,
+              yearsOfExperience: interview.jobExperience,
+              techStack: interview.techStack,
+              id: interview.id,
+              // Questions are not persisted by the API
+            })
           );
-          console.log("Setting interview data:", formattedInterviews);
           setInterviewData(formattedInterviews);
         } else {
           setInterviewData([]);
@@ -113,9 +106,6 @@ export const Interviewer = () => {
 
       // Generate questions using the server action with current locale
       const response = await generateInterview(data, locale);
-
-      // Save the raw response
-      setResponse(response.rawResponse);
 
       // Update the interview with the generated questions
       setInterviewData((prevData) => {
@@ -157,7 +147,6 @@ export const Interviewer = () => {
 
       if (response.ok) {
         const savedInterview = await response.json();
-        console.log("Saved interview with id:", savedInterview.id);
 
         // Update the interview in the state with the id from the server
         setInterviewData((prevData) => {
@@ -206,9 +195,6 @@ export const Interviewer = () => {
         // Remove the interview from the local state
         setInterviewData((prev) => prev.filter((_, i) => i !== index));
 
-        // Always clear the raw response state when deleting any interview
-        setResponse(null);
-
         // If the deleted interview was expanded, collapse it
         if (expandedInterview === index) {
           setExpandedInterview(null);
@@ -228,13 +214,11 @@ export const Interviewer = () => {
     if (!id) return;
 
     showAlert({
-      title: t("deleteConfirmTitle") || "Delete Interview",
-      description:
-        t("deleteConfirmDescription") ||
-        "Are you sure you want to delete this interview? This action cannot be undone.",
-      cancelText: t("cancelButton") || "Cancel",
-      confirmText: t("deleteButton") || "Delete",
-      loadingText: t("deletingMessage") || "Deleting...",
+      title: t("deleteConfirmTitle"),
+      description: t("deleteConfirmDescription"),
+      cancelText: t("cancelButton"),
+      confirmText: t("deleteButton"),
+      loadingText: t("deletingMessage"),
       isLoading: isDeleting,
       variant: "destructive",
       onConfirm: () => deleteInterview(id, index),
@@ -265,7 +249,7 @@ export const Interviewer = () => {
         {isLoading ? (
           <div className="flex items-center justify-center py-12">
             <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-            <p>{t("loadingMessage") || "Loading interviews..."}</p>
+            <p>{t("loadingMessage")}</p>
           </div>
         ) : interviewData.length === 0 ? (
           <div className="rounded-lg border p-8 text-center">
@@ -319,32 +303,34 @@ export const Interviewer = () => {
                       ) : null}
                       {t("regenerateButton")}
                     </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      disabled={isGenerating || isDeleting}
-                      className="flex items-center gap-1"
-                    >
-                      <Link href={`/profile/interview/${interview.id}`}>
+                    {interview.id && !isGenerating && !isDeleting ? (
+                      <Button
+                        asChild
+                        variant="outline"
+                        size="sm"
+                        className="flex items-center gap-1"
+                      >
+                        <Link href={`/profile/interview/${interview.id}`}>
+                          Go Live
+                        </Link>
+                      </Button>
+                    ) : (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        disabled
+                        className="flex items-center gap-1"
+                      >
                         Go Live
-                      </Link>
-                    </Button>
+                      </Button>
+                    )}
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={() => {
-                        console.log("Delete clicked for interview:", interview);
-                        if (interview.id) {
-                          console.log(
-                            "Deleting interview with id:",
-                            interview.id
-                          );
-                          handleDelete(interview.id, index);
-                        } else {
-                          console.error("Cannot delete: id is missing");
-                        }
+                        if (interview.id) handleDelete(interview.id, index);
                       }}
-                      disabled={isDeleting || isGenerating}
+                      disabled={isDeleting || isGenerating || !interview.id}
                       className="flex items-center gap-1 bg-red-50 hover:bg-red-100 hover:text-red-600"
                     >
                       {isDeleting && currentInterviewIndex === index ? (
@@ -352,60 +338,37 @@ export const Interviewer = () => {
                       ) : (
                         <Trash2 className="h-3 w-3" />
                       )}
-                      {t("deleteButton") || "Delete"}
+                      {t("deleteButton")}
                     </Button>
                   </div>
                 </div>
               </CardHeader>
               <CardContent>
-                {
-                  isGenerating && currentInterviewIndex === index ? (
-                    <div className="flex items-center justify-center py-8">
-                      <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                      <p>{t("generatingMessage")}</p>
-                    </div>
-                  ) : interview.questions && expandedInterview === index ? (
-                    <div className="space-y-6">
-                      <Accordion type="single" collapsible className="w-full">
-                        {interview.questions.map((q, qIndex) => (
-                          <AccordionItem
-                            key={qIndex}
-                            value={`question-${qIndex}`}
-                          >
-                            <AccordionTrigger className="text-left">
-                              {q.Question}
-                            </AccordionTrigger>
-                            <AccordionContent>
-                              <div className="prose prose-sm dark:prose-invert max-w-none">
-                                <p>{q.Answer}</p>
-                              </div>
-                            </AccordionContent>
-                          </AccordionItem>
-                        ))}
-                      </Accordion>
-
-                      {response && currentInterviewIndex === index && (
-                        <div className="mt-6 rounded-md border p-4">
-                          <h4 className="mb-2 font-medium">
-                            {t("rawResponseLabel")}
-                          </h4>
-                          <pre className="max-h-[300px] overflow-auto whitespace-pre-wrap rounded bg-gray-50 p-3 text-xs dark:bg-gray-900">
-                            {response}
-                          </pre>
-                        </div>
-                      )}
-                    </div>
-                  ) : interview.questions ? (
-                    <div className="py-4 text-center text-muted-foreground">
-                      <p>{t("expandMessage")}</p>
-                    </div>
-                  ) : null
-                  // (
-                  //   <div className="py-4 text-center text-muted-foreground">
-                  //     <p>{t("failedMessage")}</p>
-                  //   </div>
-                  // )
-                }
+                {isGenerating && currentInterviewIndex === index ? (
+                  <div className="flex items-center justify-center py-8">
+                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                    <p>{t("generatingMessage")}</p>
+                  </div>
+                ) : interview.questions && expandedInterview === index ? (
+                  <Accordion type="single" collapsible className="w-full">
+                    {interview.questions.map((q, qIndex) => (
+                      <AccordionItem key={qIndex} value={`question-${qIndex}`}>
+                        <AccordionTrigger className="text-left">
+                          {q.Question}
+                        </AccordionTrigger>
+                        <AccordionContent>
+                          <div className="prose prose-sm dark:prose-invert max-w-none">
+                            <p>{q.Answer}</p>
+                          </div>
+                        </AccordionContent>
+                      </AccordionItem>
+                    ))}
+                  </Accordion>
+                ) : interview.questions ? (
+                  <div className="py-4 text-center text-muted-foreground">
+                    <p>{t("expandMessage")}</p>
+                  </div>
+                ) : null}
               </CardContent>
             </Card>
           ))

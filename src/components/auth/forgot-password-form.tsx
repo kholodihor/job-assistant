@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
@@ -25,6 +25,9 @@ export function ForgotPasswordForm({ lang }: ForgotPasswordFormProps) {
   const [error, setError] = useState<string>("");
   const [success, setSuccess] = useState(false);
   const router = useRouter();
+  const redirectTimer = useRef<ReturnType<typeof setTimeout>>();
+
+  useEffect(() => () => clearTimeout(redirectTimer.current), []);
 
   const form = useForm<ForgotPasswordFormValues>({
     resolver: zodResolver(forgotPasswordSchema(lang)),
@@ -34,6 +37,7 @@ export function ForgotPasswordForm({ lang }: ForgotPasswordFormProps) {
   });
 
   const onSubmit = async (data: ForgotPasswordFormValues) => {
+    setError("");
     try {
       const response = await fetch("/api/auth/forgot-password", {
         method: "POST",
@@ -45,19 +49,22 @@ export function ForgotPasswordForm({ lang }: ForgotPasswordFormProps) {
         }),
       });
 
-      const result = await response.json();
+      const result: { error?: string } = await response
+        .json()
+        .catch(() => ({}));
 
       if (!response.ok) {
         throw new Error(
-          result.error || lang === "en"
-            ? "Failed to process request"
-            : "Помилка при обробці запиту"
+          result.error ||
+            (lang === "en"
+              ? "Failed to process request"
+              : "Помилка при обробці запиту")
         );
       }
 
       setSuccess(true);
       // Redirect to login page after successful submission
-      setTimeout(() => {
+      redirectTimer.current = setTimeout(() => {
         router.push("/signin");
       }, 3000);
     } catch (err) {
@@ -164,6 +171,7 @@ export function ForgotPasswordForm({ lang }: ForgotPasswordFormProps) {
                       : "Підтвердити"}
                 </Button>
                 <Button
+                  type="button"
                   onClick={() => router.push("/signin")}
                   className="w-full rounded-[40px] border-[1px] border-blue-300 bg-white text-blue-500 hover:bg-blue-100"
                   disabled={form.formState.isSubmitting}

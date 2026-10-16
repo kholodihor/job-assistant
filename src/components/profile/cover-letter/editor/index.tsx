@@ -24,8 +24,6 @@ export const LetterEditor = () => {
     isSavingToDb,
   } = useLetterData(letterId || undefined);
 
-  console.log(letterData);
-
   const setStep = useCallback(
     (key: string) => {
       const newSearchParams = new URLSearchParams(searchParams);
