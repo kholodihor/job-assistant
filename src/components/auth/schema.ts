@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { Locale } from "@/i18n/routing";
 
 export const authFormSchema = (isRegister = false) =>
   z.object({
@@ -18,15 +17,10 @@ export const authFormSchema = (isRegister = false) =>
       : z.boolean().optional(),
   });
 
-export const forgotPasswordSchema = (lang: Locale) =>
+// `t` is a translator scoped to the "Auth.forgotPassword" namespace.
+export const forgotPasswordSchema = (t: (key: string) => string) =>
   z.object({
-    email: z
-      .string()
-      .email(
-        lang === "en"
-          ? "Please enter a valid email address"
-          : "Будь ласка, введіть дійсну електронну адресу"
-      ),
+    email: z.string().email(t("invalidEmail")),
   });
 
 export const resetPasswordSchema = () =>

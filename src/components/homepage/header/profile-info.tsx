@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { SettingIcon } from "@/components/icons/setting-icon";
 import {
   DropdownMenu,
@@ -11,25 +11,24 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Link } from "@/i18n/routing";
 import { signOut } from "@/lib/auth-client";
+import { getInitials } from "./get-initials";
 
 export const ProfileInfo = ({ name }: { name: string }) => {
   const [open, setOpen] = useState(false);
   const t = useTranslations("Header.profileInfo");
+  const locale = useLocale();
 
-  const createAvatar = (name: string) => {
-    if (!name) return "??";
-    const names = name.split(" ");
-    if (names.length > 1) {
-      return `${names[0][0].toLocaleUpperCase()}${names[1][0].toLocaleUpperCase()}`;
-    }
-    return names[0][0].toLocaleUpperCase();
+  const handleSignOut = async () => {
+    await signOut();
+    window.location.href = `/${locale}`;
   };
+
   return (
     <>
       <DropdownMenu onOpenChange={(state) => setOpen(state)} modal={false}>
         <div className="hidden items-center justify-center gap-3 lg:flex">
           <div className="flex h-[2.5rem] w-[2.5rem] items-center justify-center rounded-full bg-blue-50">
-            <p className="text-body">{createAvatar(name)}</p>
+            <p className="text-body">{getInitials(name)}</p>
           </div>
           <p className="text-btn">{name}</p>
           <DropdownMenuTrigger>
@@ -49,15 +48,7 @@ export const ProfileInfo = ({ name }: { name: string }) => {
             </Link>
 
             <span className="h-[1px] w-full bg-black-100"></span>
-            <button
-              onClick={() => {
-                const locale = window.location.pathname.startsWith("/en/")
-                  ? "en"
-                  : "ua";
-                signOut();
-                window.location.href = `/${locale}`;
-              }}
-            >
+            <button type="button" onClick={handleSignOut}>
               <div className="flex gap-2">
                 <div className="relative h-6 w-6">
                   <Image src="/icons/exit.svg" fill alt={t("exitIcon")} />

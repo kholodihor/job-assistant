@@ -1,7 +1,6 @@
 import React from "react";
 import { useTranslations } from "next-intl";
-import { steps as letterSteps } from "@/components/profile/cover-letter/editor/steps";
-import { steps as resumeSteps } from "@/components/profile/shared/editor/steps";
+import { DocumentI18n } from "@/components/profile/shared/document-config";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -12,20 +11,19 @@ import {
 } from "@/components/ui/breadcrumb";
 
 interface BreadcrumbsProps {
-  componentType: string;
+  i18n: DocumentI18n;
+  steps: { key: string; titleKey: string }[];
   currentStep: string;
   setCurrentStep: (step: string) => void;
 }
 
 export const Breadcrumbs = ({
-  componentType,
+  i18n,
+  steps,
   currentStep,
   setCurrentStep,
 }: BreadcrumbsProps) => {
-  const t = useTranslations(
-    componentType === "resume" ? "Form.steps" : "FormLetter.steps"
-  );
-  const steps = componentType === "resume" ? resumeSteps : letterSteps;
+  const t = useTranslations(i18n.steps);
 
   return (
     <div className="flex justify-center px-2">

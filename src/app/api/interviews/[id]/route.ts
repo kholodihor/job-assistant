@@ -1,157 +1,72 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { and, eq } from "drizzle-orm";
-import { z } from "zod";
 import { db } from "@/db";
 import { interviews } from "@/db/schema";
-import { requireAuth } from "@/utils/auth-guard";
+import {
+  getSessionUser,
+  handleRouteError,
+  notFound,
+  unauthorized,
+} from "@/lib/api";
+import { updateInterviewSchema } from "../schema";
 
-// Schema for updating interview title if needed in the future
-const updateInterviewSchema = z.object({
-  jobPosition: z.string().min(1),
-});
+type Params = { params: Promise<{ id: string }> };
 
-export async function DELETE(
-  req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+const ownedBy = (id: string, userId: string) =>
+  and(eq(interviews.id, id), eq(interviews.createdBy, userId));
+
+export async function GET(_req: Request, { params }: Params) {
   try {
-    const { session } = await requireAuth();
-
-    if (!session) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
+    const user = await getSessionUser();
+    if (!user) return unauthorized();
     const { id } = await params;
 
-    // Check if interview exists and belongs to user
-    const interview = await db
-      .select()
-      .from(interviews)
-      .where(
-        and(eq(interviews.id, id), eq(interviews.createdBy, session.userId))
-      )
-      .then((res) => res[0]);
-
-    if (!interview) {
-      return NextResponse.json(
-        {
-          message:
-            "Interview not found or you don't have permission to delete it",
-        },
-        { status: 404 }
-      );
-    }
-
-    // Delete interview
-    await db
-      .delete(interviews)
-      .where(
-        and(eq(interviews.id, id), eq(interviews.createdBy, session.userId))
-      );
-
-    return NextResponse.json({ message: "Interview deleted successfully" });
-  } catch (error) {
-    console.error("Error deleting interview:", error);
-    return NextResponse.json(
-      { message: "Failed to delete interview", error },
-      { status: 500 }
-    );
-  }
-}
-
-export async function GET(
-  req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  try {
-    const { session } = await requireAuth();
-
-    if (!session) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-    const { id } = await params;
-
-    // Get interview
-    const interview = await db
-      .select()
-      .from(interviews)
-      .where(
-        and(eq(interviews.id, id), eq(interviews.createdBy, session.userId))
-      )
-      .then((res) => res[0]);
-
-    if (!interview) {
-      return NextResponse.json(
-        { message: "Interview not found" },
-        { status: 404 }
-      );
-    }
+    const interview = await db.query.interviews.findFirst({
+      where: ownedBy(id, user.id),
+    });
+    if (!interview) return notFound("Interview not found");
 
     return NextResponse.json(interview);
   } catch (error) {
-    console.error("Error fetching interview:", error);
-    return NextResponse.json(
-      { message: "Failed to fetch interview" },
-      { status: 500 }
-    );
+    return handleRouteError(error, "Failed to fetch interview");
   }
 }
 
-export async function PATCH(
-  req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function PATCH(req: Request, { params }: Params) {
   try {
-    const { session } = await requireAuth();
-
-    if (!session) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
+    const user = await getSessionUser();
+    if (!user) return unauthorized();
     const { id } = await params;
-    const body = await req.json();
 
-    // Validate request body
-    const validatedData = updateInterviewSchema.parse(body);
+    const { questions } = updateInterviewSchema.parse(await req.json());
 
-    // Check if interview exists and belongs to user
-    const interview = await db
-      .select()
-      .from(interviews)
-      .where(
-        and(eq(interviews.id, id), eq(interviews.createdBy, session.userId))
-      )
-      .then((res) => res[0]);
-
-    if (!interview) {
-      return NextResponse.json(
-        { message: "Interview not found" },
-        { status: 404 }
-      );
-    }
-
-    // Update interview
-    const [updatedInterview] = await db
+    const [interview] = await db
       .update(interviews)
-      .set({ jobPosition: validatedData.jobPosition })
-      .where(
-        and(eq(interviews.id, id), eq(interviews.createdBy, session.userId))
-      )
+      .set({ questions })
+      .where(ownedBy(id, user.id))
       .returning();
+    if (!interview) return notFound("Interview not found");
 
-    return NextResponse.json(updatedInterview);
+    return NextResponse.json(interview);
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        { message: "Invalid request data", errors: error.errors },
-        { status: 400 }
-      );
-    }
+    return handleRouteError(error, "Failed to update interview");
+  }
+}
 
-    console.error("Error updating interview:", error);
-    return NextResponse.json(
-      { message: "Failed to update interview" },
-      { status: 500 }
-    );
+export async function DELETE(_req: Request, { params }: Params) {
+  try {
+    const user = await getSessionUser();
+    if (!user) return unauthorized();
+    const { id } = await params;
+
+    const deleted = await db
+      .delete(interviews)
+      .where(ownedBy(id, user.id))
+      .returning({ id: interviews.id });
+    if (!deleted.length) return notFound("Interview not found");
+
+    return NextResponse.json({ message: "Interview deleted successfully" });
+  } catch (error) {
+    return handleRouteError(error, "Failed to delete interview");
   }
 }

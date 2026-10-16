@@ -1,18 +1,8 @@
-/* eslint-disable import/order */
-import type { NextRequest } from "next/server";
-import createIntlMiddleware from "next-intl/middleware";
+import createMiddleware from "next-intl/middleware";
+import { routing } from "@/i18n/routing";
 
-// Create the next-intl middleware
-const intlMiddleware = createIntlMiddleware({
-  locales: ["en", "ua"],
-  defaultLocale: "ua",
-  localePrefix: "always",
-});
-
-export default async function middleware(request: NextRequest) {
-  // Only handle localization; auth is enforced inside the app, not in Edge middleware
-  return intlMiddleware(request);
-}
+// Only handles localization; auth is enforced inside the app, not in Edge middleware
+export default createMiddleware(routing);
 
 export const config = {
   matcher: [

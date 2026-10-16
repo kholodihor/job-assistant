@@ -30,17 +30,17 @@ export const Header = () => {
               </Link>
             </li>
             {headerLinks.map((l) => (
-              <Link
-                className="hidden lg:inline-block"
+              <li
                 key={l.name}
-                href={l.href}
+                className="hidden h-full items-center justify-center lg:flex"
               >
-                <li className="flex h-full items-center justify-center">
-                  <p className="font-sans text-body text-black-500 hover:text-blue-500 3xl:text-body-sm">
-                    {l.name}
-                  </p>
-                </li>
-              </Link>
+                <Link
+                  href={l.href}
+                  className="font-sans text-body text-black-500 hover:text-blue-500 3xl:text-body-sm"
+                >
+                  {l.name}
+                </Link>
+              </li>
             ))}
           </ul>
           <div className="flex items-center gap-4">
@@ -48,16 +48,15 @@ export const Header = () => {
               <LanguageSwitcher />
             </div>
             <ProfileButtonSwitchWidget />
-            <div
+            <button
+              type="button"
               onClick={() => setOpen(true)}
+              aria-label={t("buttons.openMenu")}
+              aria-expanded={open}
               className="relative block size-12 lg:hidden"
             >
-              <Image
-                src="/icons/hamburger.svg"
-                fill
-                alt={t("images.hamburger")}
-              />
-            </div>
+              <Image src="/icons/hamburger.svg" fill alt="" />
+            </button>
           </div>
         </div>
       </header>

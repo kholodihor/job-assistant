@@ -27,7 +27,6 @@ export const resumeSchema = z.object({
     .string()
     .max(1024 * 1024)
     .nullish(),
-  publicId: z.string().max(100).nullish(),
   summary: z.string().optional(),
   name: z.string().max(255),
   location: z.string().max(320).optional(),

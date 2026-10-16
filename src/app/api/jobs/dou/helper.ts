@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { blockHeavyResources } from "../browser";
+
 export interface DouJob {
   title: string;
   company: string;
@@ -14,8 +16,6 @@ export async function searchForKeyword(
   const page = await browser.newPage();
 
   try {
-    console.log(`Searching for keyword: ${keyword}`);
-
     // Set shorter timeouts for faster response
     await page.setDefaultNavigationTimeout(20000);
     await page.setDefaultTimeout(20000);
@@ -27,26 +27,8 @@ export async function searchForKeyword(
     );
 
     // Block unnecessary resources to speed up loading
-    await page.setRequestInterception(true);
-    page.on("request", (request: any) => {
-      const resourceType = request.resourceType();
-      if (
-        resourceType === "image" ||
-        resourceType === "stylesheet" ||
-        resourceType === "font" ||
-        resourceType === "media"
-      ) {
-        request.abort();
-      } else {
-        const headers = request.headers();
-        headers["Accept-Language"] = "uk-UA,uk;q=0.9,en-US;q=0.8,en;q=0.7";
-        headers["Accept"] =
-          "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8";
-        request.continue({ headers });
-      }
-    });
+    await blockHeavyResources(page, "uk-UA,uk;q=0.9,en-US;q=0.8,en;q=0.7");
 
-    console.log("Attempting to navigate to DOU jobs page");
     try {
       await page.goto(
         `https://jobs.dou.ua/vacancies/?search=${encodeURIComponent(keyword)}`,
@@ -67,19 +49,15 @@ export async function searchForKeyword(
       );
     }
 
-    // Log current URL and page status
-    const currentUrl = await page.url();
-    console.log("Current page URL:", currentUrl);
-
-    // Wait for either the vacancy list or the no-results message
+    // Wait for either the vacancy list or the no-results message.
+    // A timeout here is not fatal: we still read whatever rendered.
     try {
       await Promise.race([
         page.waitForSelector(".l-vacancy", { timeout: 30000 }),
         page.waitForSelector(".nothing-found", { timeout: 30000 }),
       ]);
-    } catch (err) {
-      console.log(err);
-      console.log("Timeout waiting for selectors, attempting to continue...");
+    } catch {
+      // continue with whatever is on the page
     }
 
     // Get cookies regardless of vacancy presence
@@ -89,17 +67,13 @@ export async function searchForKeyword(
     );
 
     if (!csrfCookie) {
-      console.log("CSRF token not found");
       return [];
     }
-
-    console.log("CSRF token found:", csrfCookie.value);
 
     const allJobs = await page.evaluate(() => {
       // Check for no results first
       const nothingFound = document.querySelector(".nothing-found");
       if (nothingFound) {
-        console.log("No results found");
         return [];
       }
 
@@ -119,9 +93,6 @@ export async function searchForKeyword(
       }));
     });
 
-    console.log(`Found ${allJobs.length} jobs`);
-
-    console.log(`Total jobs found: ${allJobs.length}`);
     return allJobs.map((job: any) => ({
       ...job,
       link: job.link.startsWith("http")

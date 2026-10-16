@@ -1,10 +1,14 @@
 import { z } from "zod";
 
-export const interviewSchema = z.object({
-  position: z.string().min(1, "validation.positionRequired"),
-  description: z.string().min(1, "validation.descriptionRequired"),
-  techStack: z.array(z.string().trim()).optional().default([]),
-  yearsOfExperience: z.string().min(1, "validation.yearsRequired"),
-});
+export const interviewQuestionsSchema = z
+  .array(
+    z.object({
+      Question: z.string().max(2000),
+      Answer: z.string().max(10000),
+    })
+  )
+  .max(20);
 
-export type InterviewSchemaValues = z.infer<typeof interviewSchema>;
+export const updateInterviewSchema = z.object({
+  questions: interviewQuestionsSchema,
+});

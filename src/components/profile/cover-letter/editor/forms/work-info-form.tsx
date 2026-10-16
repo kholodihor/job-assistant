@@ -11,13 +11,14 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { EditorFormProps } from "@/types/letter";
+import { EditorFormProps } from "@/types/document";
+import { LetterData } from "@/types/letter";
 import { workInfoSchema } from "./schema";
 
 export const WorkInfoForm = ({
-  letterData,
-  setLetterData,
-}: EditorFormProps) => {
+  data: letterData,
+  setData: setLetterData,
+}: EditorFormProps<LetterData>) => {
   const t = useTranslations("FormLetter");
 
   const form = useForm({

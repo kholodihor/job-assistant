@@ -1,26 +1,13 @@
 "use server";
 
-import { GoogleGenerativeAI } from "@google/generative-ai";
 import PDFParser from "pdf2json";
-import { env } from "@/env";
-
-// Initialize the API client with proper env validation
-function initializeGeminiAPI() {
-  if (!env.GEMINI_API_KEY) {
-    throw new Error("GEMINI_API_KEY is not configured");
-  }
-
-  const genAI = new GoogleGenerativeAI(env.GEMINI_API_KEY);
-  return genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
-}
+import { requireSessionUser } from "@/lib/api";
+import { getGeminiModel, parseJsonResponse } from "@/lib/gemini";
 
 // Extract text from PDF using pdf2json (Next.js compatible)
 async function extractTextFromPDF(buffer: Buffer): Promise<string> {
   return new Promise((resolve, reject) => {
     try {
-      console.log("[SERVER ACTION] Starting PDF parsing with pdf2json...");
-      console.log("[SERVER ACTION] Buffer size:", buffer.length);
-
       // Use the TypeScript workaround from tuffstuff9/nextjs-pdf-parser
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const pdfParser = new (PDFParser as any)(null, 1) as {
@@ -41,18 +28,8 @@ async function extractTextFromPDF(buffer: Buffer): Promise<string> {
 
       pdfParser.on("pdfParser_dataReady", () => {
         try {
-          console.log("[SERVER ACTION] PDF data ready, extracting text...");
-
           // Extract text using getRawTextContent method
           const rawText = pdfParser.getRawTextContent();
-
-          console.log(`[SERVER ACTION] PDF parsed successfully`);
-          console.log(
-            `[SERVER ACTION] Extracted text length: ${rawText.length}`
-          );
-          console.log(
-            `[SERVER ACTION] First 200 chars: ${rawText.substring(0, 200)}`
-          );
 
           resolve(rawText);
         } catch (extractError) {
@@ -217,13 +194,7 @@ async function sendMessageWithRetry(
 ): Promise<{ response: { text: () => string } }> {
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
-      console.log(
-        `[SERVER ACTION] Gemini API attempt ${attempt}/${maxRetries}`
-      );
       const result = await chatSession.sendMessage(prompt);
-      console.log(
-        `[SERVER ACTION] Gemini API call successful on attempt ${attempt}`
-      );
       return result;
     } catch (error: unknown) {
       console.error(
@@ -240,7 +211,6 @@ async function sendMessageWithRetry(
         if (attempt < maxRetries) {
           // Exponential backoff: 2s, 4s, 8s
           const delay = Math.pow(2, attempt) * 1000;
-          console.log(`[SERVER ACTION] Retrying in ${delay}ms...`);
           await new Promise((resolve) => setTimeout(resolve, delay));
           continue;
         }
@@ -259,19 +229,20 @@ export async function analyzeCv(
   formData: CVAnalysisFormData,
   locale: string = "en"
 ): Promise<CVAnalysisResponse> {
-  try {
-    console.log("[SERVER ACTION] Starting CV analysis...");
-    console.log("[SERVER ACTION] File name:", formData.cvFile.name);
-    console.log("[SERVER ACTION] File size:", formData.cvFile.size);
+  await requireSessionUser();
 
+  if (
+    formData.cvFile.type !== "application/pdf" ||
+    formData.cvFile.size > 5 * 1024 * 1024
+  ) {
+    throw new Error("Only PDF files up to 5 MB are supported");
+  }
+
+  try {
     // Extract text from PDF file using pdf2json
-    console.log("[SERVER ACTION] Converting file to buffer...");
     const arrayBuffer = await formData.cvFile.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
-    console.log("[SERVER ACTION] Buffer created, size:", buffer.length);
 
-    // Extract text using PDF.js (pdfjs-dist)
-    console.log("[SERVER ACTION] Starting PDF parsing with PDF.js...");
     const cvText = await extractTextFromPDF(buffer);
 
     if (!cvText || cvText.trim().length === 0) {
@@ -282,8 +253,7 @@ export async function analyzeCv(
 
     const prompt = getAnalysisPrompt(formData, cvText, locale);
 
-    // Initialize Gemini model
-    const model = initializeGeminiAPI();
+    const model = getGeminiModel({ model: "gemini-2.0-flash" });
 
     // Start chat session
     const chatSession = model.startChat({
@@ -295,15 +265,7 @@ export async function analyzeCv(
     const result = await sendMessageWithRetry(chatSession, prompt);
     const responseText = result.response.text();
 
-    // Extract JSON from the response
-    // The response might contain markdown code blocks, so we need to extract just the JSON part
-    const jsonMatch = responseText.match(/```json\n([\s\S]*?)\n```/) ||
-      responseText.match(/```([\s\S]*?)```/) || [null, responseText];
-
-    const jsonString = jsonMatch[1] ? jsonMatch[1].trim() : responseText.trim();
-
-    // Parse the JSON
-    const feedback = JSON.parse(jsonString) as CVAnalysisFeedback;
+    const feedback = parseJsonResponse<CVAnalysisFeedback>(responseText);
 
     return {
       feedback,

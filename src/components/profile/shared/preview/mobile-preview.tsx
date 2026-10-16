@@ -1,27 +1,23 @@
 import Image from "next/image";
 import { useTranslations } from "next-intl";
-import { ResumeData } from "@/types/resume";
-import {
-  renderLetterTemplate,
-  renderResumeTemplate,
-} from "@/utils/render-template";
+import { DocumentI18n } from "@/components/profile/shared/document-config";
+import { DocumentKind } from "@/types/document";
+import { DocumentTemplate, PreviewDocument } from "./document-template";
 
-interface MobilePreviewProps {
-  data: ResumeData;
+type MobilePreviewProps<K extends DocumentKind> = PreviewDocument<K> & {
   template: string;
   onClose: () => void;
-  componentType: string;
-}
+  i18n: DocumentI18n;
+};
 
-export const MobilePreview = ({
-  componentType,
+export const MobilePreview = <K extends DocumentKind>({
+  kind,
   data,
   template,
   onClose,
-}: MobilePreviewProps) => {
-  const t = useTranslations(
-    componentType === "resume" ? "ResumePage" : "CoverLetterPage"
-  );
+  i18n,
+}: MobilePreviewProps<K>) => {
+  const t = useTranslations(i18n.preview);
 
   return (
     <div className="absolute left-0 top-0 z-50 h-full w-full bg-white/70 backdrop-blur-sm xl:hidden">
@@ -43,10 +39,7 @@ export const MobilePreview = ({
       <div className="no-scrollbar h-[calc(100vh-56px)] overflow-y-auto">
         <div className="mx-auto flex justify-center p-3">
           <div className="w-full max-w-[800px]">
-            {componentType === "resume"
-              ? renderResumeTemplate(template)({ data: data })
-              : // @ts-expect-error type error
-                renderLetterTemplate(template)({ data: data })}
+            <DocumentTemplate kind={kind} data={data} template={template} />
           </div>
         </div>
       </div>

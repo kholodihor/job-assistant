@@ -1,7 +1,7 @@
 "use client";
 
 import { Loader2 } from "lucide-react";
-import { useLocale } from "next-intl";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { JobCard } from "./components/job-card";
 import { useJobs } from "./hooks/use-jobs";
@@ -9,15 +9,15 @@ import { useJobs } from "./hooks/use-jobs";
 export const Jobs = () => {
   const { jobs, isLoading, isLoadingLinkedIn, error, source, handleSearch } =
     useJobs();
-  const locale = useLocale();
+  const t = useTranslations("Jobs");
 
   return (
     <div className="w-full space-y-4 p-[24px]">
       {jobs.length ? (
         <div className="mb-2 text-sm text-gray-500">
-          {locale === "en" ? "Found" : "Знайдено"}
+          {t("found")}
           &nbsp;
-          {jobs.length} {locale === "en" ? "jobs" : "вакансій"}
+          {jobs.length} {t("jobs")}
         </div>
       ) : null}
 

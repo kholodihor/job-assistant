@@ -1,6 +1,5 @@
 "use client";
 
-import { usePathname, useRouter } from "next/navigation";
 import { useLocale } from "next-intl";
 import {
   Select,
@@ -9,8 +8,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Locale, usePathname, useRouter } from "@/i18n/routing";
 
-const languages = [
+const languages: { code: Locale; label: string }[] = [
   { code: "en", label: "EN" },
   { code: "ua", label: "UA" },
 ];
@@ -25,15 +25,12 @@ export const LanguageSwitcher = ({
   const pathname = usePathname();
 
   const handleLanguageChange = (newLocale: string) => {
-    const currentPath = pathname;
-    // Handle root path case
-    if (currentPath === "/") {
-      router.push(`/${newLocale}`);
-      return;
-    }
-    // Handle other paths
-    const newPath = currentPath.replace(`/${locale}`, `/${newLocale}`);
-    router.push(newPath);
+    // Read the query at click time; useSearchParams in the shared header
+    // would force a Suspense boundary around every page.
+    const query = window.location.search;
+    router.replace(`${pathname}${query}`, {
+      locale: newLocale as Locale,
+    });
   };
 
   if (variant === "mobile") {
@@ -41,6 +38,7 @@ export const LanguageSwitcher = ({
       <div className="flex gap-4">
         {languages.map((lang) => (
           <button
+            type="button"
             key={lang.code}
             onClick={() => handleLanguageChange(lang.code)}
             className={`text-xl font-semibold 2xl:text-[3rem] ${

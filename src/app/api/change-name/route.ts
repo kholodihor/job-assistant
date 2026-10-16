@@ -1,42 +1,28 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { eq } from "drizzle-orm";
+import { z } from "zod";
 import { db } from "@/db";
 import { user as userTable } from "@/db/schema";
-import { findUserByEmail } from "@/resources/user-queries";
-import { requireAuth } from "@/utils/auth-guard";
+import { getSessionUser, handleRouteError, unauthorized } from "@/lib/api";
 
-export async function POST(req: NextRequest) {
+const changeNameSchema = z.object({
+  name: z.string().trim().min(1).max(255),
+});
+
+export async function POST(req: Request) {
   try {
-    const { session } = await requireAuth();
+    const user = await getSessionUser();
+    if (!user) return unauthorized();
 
-    if (!session) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const body = await req.json();
-    const { name, email, updatedAt } = body;
-    const existingUser = await findUserByEmail(email);
-    const formattedUpdatedAt = updatedAt ? new Date(updatedAt) : new Date();
-
-    if (!existingUser) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
-    }
+    const { name } = changeNameSchema.parse(await req.json());
 
     await db
       .update(userTable)
-      .set({ name, updatedAt: formattedUpdatedAt })
-      .where(eq(userTable.email, email))
-      .returning();
+      .set({ name, updatedAt: new Date() })
+      .where(eq(userTable.id, user.id));
 
     return NextResponse.json({ message: "Name was updated successfully" });
   } catch (error) {
-    console.log(error);
-    return NextResponse.json(
-      {
-        error: "Failed to update the name",
-        details: error instanceof Error ? error.message : String(error),
-      },
-      { status: 500 }
-    );
+    return handleRouteError(error, "Failed to update the name");
   }
 }

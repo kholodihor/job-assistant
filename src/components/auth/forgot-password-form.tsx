@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -14,26 +15,28 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Locale, useRouter } from "@/i18n/routing";
+import { useRouter } from "@/i18n/routing";
 import { ForgotPasswordFormValues, forgotPasswordSchema } from "./schema";
 
-interface ForgotPasswordFormProps {
-  lang: Locale;
-}
-
-export function ForgotPasswordForm({ lang }: ForgotPasswordFormProps) {
+export function ForgotPasswordForm() {
   const [error, setError] = useState<string>("");
   const [success, setSuccess] = useState(false);
   const router = useRouter();
+  const t = useTranslations("Auth.forgotPassword");
+  const tAuth = useTranslations("Auth");
+  const redirectTimer = useRef<ReturnType<typeof setTimeout>>();
+
+  useEffect(() => () => clearTimeout(redirectTimer.current), []);
 
   const form = useForm<ForgotPasswordFormValues>({
-    resolver: zodResolver(forgotPasswordSchema(lang)),
+    resolver: zodResolver(forgotPasswordSchema(t)),
     defaultValues: {
       email: "",
     },
   });
 
   const onSubmit = async (data: ForgotPasswordFormValues) => {
+    setError("");
     try {
       const response = await fetch("/api/auth/forgot-password", {
         method: "POST",
@@ -45,29 +48,21 @@ export function ForgotPasswordForm({ lang }: ForgotPasswordFormProps) {
         }),
       });
 
-      const result = await response.json();
+      const result: { error?: string } = await response
+        .json()
+        .catch(() => ({}));
 
       if (!response.ok) {
-        throw new Error(
-          result.error || lang === "en"
-            ? "Failed to process request"
-            : "Помилка при обробці запиту"
-        );
+        throw new Error(result.error || t("failedToProcess"));
       }
 
       setSuccess(true);
       // Redirect to login page after successful submission
-      setTimeout(() => {
+      redirectTimer.current = setTimeout(() => {
         router.push("/signin");
       }, 3000);
     } catch (err) {
-      setError(
-        err instanceof Error
-          ? err.message
-          : lang === "en"
-            ? "Failed to process request"
-            : "Помилка при обробці запиту"
-      );
+      setError(err instanceof Error ? err.message : t("failedToProcess"));
     }
   };
 
@@ -77,22 +72,12 @@ export function ForgotPasswordForm({ lang }: ForgotPasswordFormProps) {
         <Card className="w-full max-w-[600px] p-4 sm:p-8 md:p-[50px]">
           <CardHeader className="mb-6 p-0 sm:mb-8">
             <CardTitle className="text-center text-xl font-semibold sm:text-2xl">
-              {lang === "en"
-                ? "Check Your Email"
-                : "Перевірте свою електронну пошту"}
+              {t("checkEmailTitle")}
             </CardTitle>
           </CardHeader>
           <CardContent className="p-0 px-4 text-center sm:px-8 md:px-[70px]">
-            <p>
-              {lang === "en"
-                ? "If an account exists for this email, you will receive password reset instructions."
-                : "Якщо обліковий запис існує для цієї електронної адреси, ви отримаєте інструкції щодо скидання пароля."}
-            </p>
-            <p className="mt-4 text-blue-500">
-              {lang === "en"
-                ? "Redirecting to login page..."
-                : "Перенаправлення на сторінку входу..."}
-            </p>
+            <p>{t("checkEmailDescription")}</p>
+            <p className="mt-4 text-blue-500">{t("redirecting")}</p>
           </CardContent>
         </Card>
       </div>
@@ -104,7 +89,7 @@ export function ForgotPasswordForm({ lang }: ForgotPasswordFormProps) {
       <Card className="w-full max-w-[600px] p-4 sm:p-8 md:p-[50px]">
         <CardHeader className="mb-6 p-0 sm:mb-8">
           <CardTitle className="text-center text-xl font-semibold sm:text-2xl">
-            {lang === "en" ? "Forgot Password?" : "Забули пароль?"}
+            {t("title")}
           </CardTitle>
         </CardHeader>
         <CardContent className="p-0 px-4 sm:px-8 md:px-[70px]">
@@ -115,9 +100,7 @@ export function ForgotPasswordForm({ lang }: ForgotPasswordFormProps) {
           )}
 
           <p className="mb-4 text-center text-sm sm:mb-6 sm:text-base">
-            {lang === "en"
-              ? "Please provide your email address to verify your identity."
-              : "Вкажіть  Вашу електронну адресу, щоб підтвердити  Вашу особу."}
+            {t("description")}
           </p>
 
           <Form {...form}>
@@ -156,20 +139,17 @@ export function ForgotPasswordForm({ lang }: ForgotPasswordFormProps) {
                   disabled={form.formState.isSubmitting}
                 >
                   {form.formState.isSubmitting
-                    ? lang === "en"
-                      ? "Processing..."
-                      : "Обробка..."
-                    : lang === "en"
-                      ? "Confirm"
-                      : "Підтвердити"}
+                    ? tAuth("processing")
+                    : t("confirm")}
                 </Button>
                 <Button
+                  type="button"
                   onClick={() => router.push("/signin")}
                   className="w-full rounded-[40px] border-[1px] border-blue-300 bg-white text-blue-500 hover:bg-blue-100"
                   disabled={form.formState.isSubmitting}
                   variant="outline"
                 >
-                  {lang === "en" ? "Cancel" : "Скасувати"}
+                  {tAuth("cancel")}
                 </Button>
               </div>
             </form>

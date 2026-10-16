@@ -3,13 +3,19 @@ import { useLocale, useTranslations } from "next-intl";
 import { BsStars } from "react-icons/bs";
 import { toast } from "sonner";
 import { generateTextGemini } from "@/app/actions/generate-text-gemini";
-import { useResumeLogic } from "@/components/profile/hooks/use-resume-logic";
+import { resumeConfig } from "@/components/profile/resume/config";
+import { useDocumentCollection } from "@/components/profile/shared/hooks/use-document-collection";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { EditorFormProps } from "@/types/letter";
+import { EditorFormProps } from "@/types/document";
+import { LetterData } from "@/types/letter";
 
-export const TextForm = ({ letterData, setLetterData }: EditorFormProps) => {
-  const { allResumes, getResumeData } = useResumeLogic();
+export const TextForm = ({
+  data: letterData,
+  setData: setLetterData,
+}: EditorFormProps<LetterData>) => {
+  const { allDocuments: allResumes, getDocumentData: getResumeData } =
+    useDocumentCollection(resumeConfig);
   const [isGenerating, setIsGenerating] = useState(false);
   const t = useTranslations("FormLetter");
   const locale = useLocale();

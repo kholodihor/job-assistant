@@ -1,12 +1,14 @@
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Icon } from "@/components/shared/icon";
 import { Link } from "@/i18n/routing";
 import { useSession } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
 import { Avatar } from "./components/avatar";
 
-export function Sidebar({ lng }: { lng: string }) {
+export function Sidebar() {
+  const t = useTranslations("Sidebar");
   const pathname = usePathname();
   const { data: session } = useSession();
 
@@ -28,7 +30,7 @@ export function Sidebar({ lng }: { lng: string }) {
 
   return (
     <aside className="hidden border-r-2 px-4 font-semibold lg:block xl:w-[20vw]">
-      <Avatar name={session?.user.name || "User"} />
+      <Avatar name={session?.user.name || t("defaultUserName")} />
       <nav className="mt-5">
         <ul className="space-y-1">
           <li>
@@ -38,7 +40,7 @@ export function Sidebar({ lng }: { lng: string }) {
             >
               <Icon name="icon-dashboard" size="w-6 h-6" />
               <span className="hidden whitespace-nowrap md:inline-block">
-                {lng === "en" ? "Dashboard" : "Панель керування"}
+                {t("dashboard")}
               </span>
             </Link>
           </li>
@@ -49,7 +51,7 @@ export function Sidebar({ lng }: { lng: string }) {
             >
               <Icon name="icon-resume" size="w-6 h-6" />
               <span className="hidden whitespace-nowrap md:inline-block">
-                {lng === "en" ? "Resume" : "Резюме"}
+                {t("resume")}
               </span>
             </Link>
           </li>
@@ -60,7 +62,7 @@ export function Sidebar({ lng }: { lng: string }) {
             >
               <Icon name="icon-cover-letter" size="w-6 h-6" />
               <span className="hidden whitespace-nowrap md:inline-block">
-                {lng === "en" ? "Cover Letter" : "Супровідний лист"}
+                {t("coverLetter")}
               </span>
             </Link>
           </li>
@@ -71,7 +73,7 @@ export function Sidebar({ lng }: { lng: string }) {
             >
               <Icon name="icon-search" size="w-6 h-6" />
               <span className="hidden whitespace-nowrap md:inline-block">
-                {lng === "en" ? "Search Jobs" : "Пошук роботи"}
+                {t("searchJobs")}
               </span>
             </Link>
           </li>
@@ -82,7 +84,7 @@ export function Sidebar({ lng }: { lng: string }) {
             >
               <Icon name="icon-interview-trainer" size="w-6 h-6" />
               <span className="hidden whitespace-nowrap md:inline-block">
-                {lng === "en" ? "Interview Trainer" : "Тренер інтерв'ю"}
+                {t("interviewTrainer")}
               </span>
             </Link>
           </li>
@@ -100,7 +102,7 @@ export function Sidebar({ lng }: { lng: string }) {
                 className="ml-1"
               />
               <span className="hidden whitespace-nowrap md:inline-block">
-                {lng === "en" ? "CV Analyzer" : "Аналізатор резюме"}
+                {t("cvAnalyzer")}
               </span>
             </Link>
           </li>

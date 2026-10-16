@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import {
@@ -11,18 +11,14 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Locale } from "@/i18n/routing";
-import { useSession } from "@/lib/auth-client";
 import { ChangePasswordValues, changePasswordSchema } from "./schema";
 
 export const ChangePassword = () => {
   const t = useTranslations("Settings");
-  const lang = useLocale() as Locale;
-  const { data: session } = useSession();
-  const token = session?.user.id;
+  const tValidation = useTranslations("Settings.validation");
 
   const form = useForm<ChangePasswordValues>({
-    resolver: zodResolver(changePasswordSchema(lang)),
+    resolver: zodResolver(changePasswordSchema(tValidation)),
     defaultValues: {
       oldPassword: "",
       newPassword: "",
@@ -38,16 +34,15 @@ export const ChangePassword = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          idUser: token,
-          ...values,
+          oldPassword: values.oldPassword,
+          newPassword: values.newPassword,
         }),
       });
-      if (res.ok) {
-        form.reset();
-      }
-      toast.success(t("ChangePassword.message"));
+      if (!res.ok) throw new Error(`Request failed with ${res.status}`);
+      form.reset();
+      toast.success(t("changePassword.message"));
     } catch (error) {
-      toast.error(t("ChangePassword.error"));
+      toast.error(t("changePassword.error"));
       console.error("Error submitting form:", error);
     }
   }
@@ -64,12 +59,12 @@ export const ChangePassword = () => {
           render={({ field }) => (
             <FormItem>
               <FormLabel className="text-h4">
-                {lang === "en" ? "Old password" : "Старий пароль"}
+                {t("changePassword.oldPassword")}
               </FormLabel>
               <FormControl>
                 <Input
                   className="max-w-[360px]"
-                  placeholder={lang === "en" ? "Old password" : "Старий пароль"}
+                  placeholder={t("changePassword.oldPassword")}
                   {...field}
                 />
               </FormControl>
@@ -83,12 +78,12 @@ export const ChangePassword = () => {
           render={({ field }) => (
             <FormItem>
               <FormLabel className="text-h4">
-                {lang === "en" ? "New password" : "Новий пароль"}
+                {t("changePassword.newPassword")}
               </FormLabel>
               <FormControl>
                 <Input
                   className="max-w-[360px]"
-                  placeholder={lang === "en" ? "New password" : "Новий пароль"}
+                  placeholder={t("changePassword.newPassword")}
                   {...field}
                 />
               </FormControl>
@@ -102,18 +97,12 @@ export const ChangePassword = () => {
           render={({ field }) => (
             <FormItem>
               <FormLabel className="text-h4">
-                {lang === "en"
-                  ? "Repeat new password"
-                  : "Повторіть новий пароль"}
+                {t("changePassword.repeatNewPassword")}
               </FormLabel>
               <FormControl>
                 <Input
                   className="max-w-[360px]"
-                  placeholder={
-                    lang === "en"
-                      ? "Repeat new password"
-                      : "Повторіть новий пароль"
-                  }
+                  placeholder={t("changePassword.repeatNewPassword")}
                   {...field}
                 />
               </FormControl>
@@ -125,7 +114,7 @@ export const ChangePassword = () => {
           className="max-w-[360px] rounded-[100px] bg-blue-500 px-[45px] py-[12px] text-white"
           type="submit"
         >
-          {lang === "en" ? "Change" : "Змінити"}
+          {t("submit")}
         </button>
       </form>
     </Form>

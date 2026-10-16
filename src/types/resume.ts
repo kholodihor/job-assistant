@@ -42,14 +42,3 @@ export interface ResumeData {
   summary?: string;
   template?: string;
 }
-
-export interface IResume extends ResumeData {
-  id: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface EditorFormProps {
-  resumeData: ResumeData;
-  setResumeData: (data: ResumeData) => void;
-}

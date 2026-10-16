@@ -5,7 +5,8 @@ export type Locale = "en" | "ua";
 
 export const routing = defineRouting({
   locales: ["en", "ua"],
-  defaultLocale: "en",
+  defaultLocale: "ua",
+  localePrefix: "always",
 });
 
 export const { Link, redirect, usePathname, useRouter, getPathname } =

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useLocale } from "next-intl";
 import { LetterData } from "@/types/letter";
 
 // const formatDate = (date: Date) => {
@@ -11,6 +12,7 @@ import { LetterData } from "@/types/letter";
 
 export const DetailedTemplate = ({ data }: { data: LetterData }) => {
   const [currentDate, setCurrentDate] = useState("");
+  const locale = useLocale();
 
   const formattedText = data.text
     ? data.text.split("\n").map((line, index) => (
@@ -22,7 +24,7 @@ export const DetailedTemplate = ({ data }: { data: LetterData }) => {
 
   useEffect(() => {
     const formatDate = (date: Date) => {
-      return new Intl.DateTimeFormat("uk-UA", {
+      return new Intl.DateTimeFormat(locale === "ua" ? "uk-UA" : "en-US", {
         day: "numeric",
         month: "long",
         year: "numeric",
@@ -30,7 +32,7 @@ export const DetailedTemplate = ({ data }: { data: LetterData }) => {
     };
 
     setCurrentDate(formatDate(new Date()));
-  }, []);
+  }, [locale]);
 
   return (
     <div className="aspect-[210/297] h-fit w-full bg-white text-black-400">

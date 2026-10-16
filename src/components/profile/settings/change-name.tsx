@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import {
@@ -11,24 +11,24 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Locale } from "@/i18n/routing";
 import { useSession } from "@/lib/auth-client";
 import { ChangeNameValues, changeNameSchema } from "./schema";
 
 export const ChangeForm = () => {
   const t = useTranslations("Settings");
-  const lang = useLocale() as Locale;
+  const tValidation = useTranslations("Settings.validation");
   const { data: session } = useSession();
 
   async function handleSubmit(values: ChangeNameValues) {
     try {
-      await fetch("/api/change-name", {
+      const res = await fetch("/api/change-name", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(values),
+        body: JSON.stringify({ name: values.name }),
       });
+      if (!res.ok) throw new Error(`Request failed with ${res.status}`);
       toast.success(t("changeName.message"));
       // better-auth session will be refreshed on next navigation; no client update
     } catch (error) {
@@ -38,7 +38,7 @@ export const ChangeForm = () => {
   }
 
   const form = useForm<ChangeNameValues>({
-    resolver: zodResolver(changeNameSchema(lang)),
+    resolver: zodResolver(changeNameSchema(tValidation)),
     defaultValues: {
       name: session?.user.name || "",
       email: session?.user.email || "",
@@ -56,13 +56,11 @@ export const ChangeForm = () => {
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-h4">
-                {lang === "en" ? "Name" : "Ім'я"}
-              </FormLabel>
+              <FormLabel className="text-h4">{t("changeName.name")}</FormLabel>
               <FormControl>
                 <Input
                   className="max-w-[360px]"
-                  placeholder={lang === "en" ? "Your name" : "Вкажіть ім'я"}
+                  placeholder={t("changeName.namePlaceholder")}
                   {...field}
                 />
               </FormControl>
@@ -74,7 +72,7 @@ export const ChangeForm = () => {
           className="max-w-[360px] rounded-[100px] bg-blue-500 px-[45px] py-[12px] text-white hover:bg-blue-600"
           type="submit"
         >
-          {lang === "en" ? "Change" : "Змінити"}
+          {t("submit")}
         </button>
       </form>
     </Form>

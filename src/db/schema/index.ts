@@ -6,7 +6,7 @@ export {
   userRelations,
   verification,
 } from "./auth";
-export { educations } from "./educations";
+export { educations, educationsRelations } from "./educations";
 export { interviews } from "./interviews";
 export { letters } from "./letters";
 export {
@@ -14,4 +14,4 @@ export {
   passwordResetTokensRelations,
 } from "./password-reset-tokens";
 export { resumes, resumesRelations } from "./resumes";
-export { workExperiences } from "./work-experiences";
+export { workExperiences, workExperiencesRelations } from "./work-experiences";

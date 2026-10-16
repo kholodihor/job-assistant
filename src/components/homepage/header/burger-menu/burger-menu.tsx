@@ -1,11 +1,6 @@
 import Image from "next/image";
-import {
-  Dispatch,
-  SetStateAction,
-  useCallback,
-  useEffect,
-  useRef,
-} from "react";
+import { Dispatch, SetStateAction, useCallback, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import { MenuContent } from "./menu-content";
 
 export const BurgerMenu = ({
@@ -15,44 +10,17 @@ export const BurgerMenu = ({
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
 }) => {
-  const layerRef = useRef<HTMLDivElement>(null);
-
+  const t = useTranslations("Header.menu");
   const closeMenu = useCallback(() => setOpen(false), [setOpen]);
 
   useEffect(() => {
-    const currentLayer = layerRef.current;
-
-    if (currentLayer) {
-      currentLayer.addEventListener("click", closeMenu);
-    }
-
-    if (open) {
-      document.body.style.overflow = "hidden";
-      currentLayer?.addEventListener("click", closeMenu);
-    } else {
-      document.body.style.overflowY = "auto";
-    }
-
+    if (!open) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
     return () => {
-      if (currentLayer) {
-        currentLayer.removeEventListener("click", closeMenu);
-      }
+      document.body.style.overflow = previousOverflow;
     };
-  }, [open, closeMenu]);
-
-  // useEffect(() => {
-  //   const currentLayer = layerRef.current;
-  //   if (open) {
-  //     document.body.style.overflow = "hidden";
-  //     currentLayer?.addEventListener("click", closeMenu);
-  //   } else {
-  //     document.body.style.overflowY = "auto";
-  //   }
-  //   return () => {
-  //     document.body.style.overflowY = "auto";
-  //     currentLayer?.removeEventListener("click", closeMenu);
-  //   };
-  // }, [open, closeMenu]);
+  }, [open]);
 
   return (
     <>
@@ -65,17 +33,20 @@ export const BurgerMenu = ({
         }
       >
         <MenuContent closeMenu={closeMenu} />
-        <span
+        <button
+          type="button"
+          aria-label={t("closeMenu")}
           className="absolute right-3 top-4 block size-10 text-white"
           onClick={closeMenu}
         >
-          <div className="relative size-full fill-white">
-            <Image src={"/icons/cross.svg"} fill alt="cross" />
-          </div>
-        </span>
+          <span className="relative block size-full fill-white">
+            <Image src={"/icons/cross.svg"} fill alt="" />
+          </span>
+        </button>
       </div>
       <div
-        ref={layerRef}
+        onClick={closeMenu}
+        aria-hidden="true"
         className="bg-[rgba(255, 255, 255, 0.7)] fixed top-0 z-40 h-screen w-screen backdrop-blur"
         style={open ? { display: "block" } : { display: "none" }}
       ></div>

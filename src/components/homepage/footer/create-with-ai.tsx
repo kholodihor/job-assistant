@@ -1,7 +1,7 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { useRouter } from "@/i18n/routing";
 
 export const CreateWithAi = ({ classNames }: { classNames: string }) => {
   const t = useTranslations("Footer.createWithAi");

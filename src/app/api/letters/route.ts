@@ -1,85 +1,40 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { desc, eq } from "drizzle-orm";
-import { z } from "zod";
 import { db } from "@/db";
 import { letters } from "@/db/schema";
-import { requireAuth } from "@/utils/auth-guard";
+import { getSessionUser, handleRouteError, unauthorized } from "@/lib/api";
 import { letterSchema } from "./schema";
 
-export async function POST(req: NextRequest) {
+export async function POST(req: Request) {
   try {
-    const { session } = await requireAuth();
-
-    if (!session) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const user = await getSessionUser();
+    if (!user) return unauthorized();
 
     const body = await req.json();
-    const { data } = body;
+    const data = letterSchema.parse(body.data);
 
-    if (!data) {
-      return NextResponse.json(
-        { message: "Invalid letter data" },
-        { status: 400 }
-      );
-    }
+    const [letter] = await db
+      .insert(letters)
+      .values({ ...data, userId: user.id })
+      .returning();
 
-    try {
-      const validatedData = letterSchema.parse(data);
-
-      // Insert the letter
-      const [letter] = await db
-        .insert(letters)
-        .values({
-          ...validatedData,
-          userId: session.userId,
-        })
-        .returning();
-
-      // Return complete letter data
-      return NextResponse.json({ ...letter });
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        return NextResponse.json(
-          {
-            message: "Invalid letter data",
-            errors: (error as z.ZodError).errors,
-          },
-          { status: 400 }
-        );
-      }
-      throw error;
-    }
+    return NextResponse.json(letter);
   } catch (error) {
-    console.error("Error creating the letter:", error);
-    return NextResponse.json(
-      { message: "Failed to create the letter", error },
-      { status: 500 }
-    );
+    return handleRouteError(error, "Failed to create the letter");
   }
 }
 
 export async function GET() {
   try {
-    const { session } = await requireAuth();
+    const user = await getSessionUser();
+    if (!user) return unauthorized();
 
-    if (!session) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    // First get all letters
-    const userLetters = await db
-      .select()
-      .from(letters)
-      .where(eq(letters.userId, session.userId))
-      .orderBy(desc(letters.updatedAt));
-
+    const userLetters = await db.query.letters.findMany({
+      where: eq(letters.userId, user.id),
+      orderBy: desc(letters.updatedAt),
+    });
     return NextResponse.json(userLetters);
   } catch (error) {
-    console.error("Error fetching letters:", error);
-    return NextResponse.json(
-      { message: "Failed to fetch letters" },
-      { status: 500 }
-    );
+    return handleRouteError(error, "Failed to fetch letters");
   }
 }

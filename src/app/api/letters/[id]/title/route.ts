@@ -1,63 +1,39 @@
-import { NextRequest, NextResponse } from "next/server";
-import { and, eq, sql } from "drizzle-orm";
+import { NextResponse } from "next/server";
+import { and, eq } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "@/db";
 import { letters } from "@/db/schema";
-import { requireAuth } from "@/utils/auth-guard";
+import {
+  getSessionUser,
+  handleRouteError,
+  notFound,
+  unauthorized,
+} from "@/lib/api";
 
 const updateTitleSchema = z.object({
   title: z.string().min(1).max(255),
 });
 
 export async function PATCH(
-  req: NextRequest,
+  req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { session } = await requireAuth();
-
-    if (!session) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
+    const user = await getSessionUser();
+    if (!user) return unauthorized();
     const { id } = await params;
-    const body = await req.json();
 
-    // Validate request body
-    const validatedData = updateTitleSchema.parse(body);
+    const { title } = updateTitleSchema.parse(await req.json());
 
-    // First check if the letter exists and belongs to the user
-    const letter = await db.query.letters.findFirst({
-      where: and(eq(letters.id, id), eq(letters.userId, session.userId)),
-      columns: { id: true },
-    });
+    const updated = await db
+      .update(letters)
+      .set({ title })
+      .where(and(eq(letters.id, id), eq(letters.userId, user.id)))
+      .returning({ title: letters.title });
+    if (!updated.length) return notFound("Letter not found");
 
-    if (!letter) {
-      return NextResponse.json(
-        { message: "The letter is not found" },
-        { status: 404 }
-      );
-    }
-
-    // Update using raw SQL to avoid any timestamp issues
-    await db.execute(
-      sql`UPDATE letters SET title = ${validatedData.title} WHERE id = ${id}`
-    );
-
-    // Return only the new title
-    return NextResponse.json({ title: validatedData.title });
+    return NextResponse.json({ title });
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        { message: "Invalid title", errors: error.errors },
-        { status: 400 }
-      );
-    }
-
-    console.error("Error updating the title of the letter:", error);
-    return NextResponse.json(
-      { message: "Failed to update the title of the letter", error },
-      { status: 500 }
-    );
+    return handleRouteError(error, "Failed to update the title of the letter");
   }
 }
