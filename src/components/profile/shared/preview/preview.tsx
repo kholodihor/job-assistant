@@ -3,31 +3,24 @@ import { useMemo, useRef } from "react";
 import { A4_WIDTH, MIN_ZOOM, PADDING } from "@/constants";
 import useDimensions from "@/hooks/use-dimensions";
 import { cn } from "@/lib/utils";
-import { ResumeData } from "@/types/resume";
-import {
-  renderLetterTemplate,
-  renderResumeTemplate,
-} from "@/utils/render-template";
+import { DocumentKind } from "@/types/document";
+import { DocumentTemplate, PreviewDocument } from "./document-template";
 
-interface PreviewSectionProps {
-  data: ResumeData;
+type PreviewSectionProps<K extends DocumentKind> = PreviewDocument<K> & {
   template: string;
-  componentType: string;
   isPrintMode?: boolean;
-}
+};
 
-export const PreviewSection = ({
+export const PreviewSection = <K extends DocumentKind>({
+  kind,
   data,
   template,
-  componentType,
   isPrintMode = false,
-}: PreviewSectionProps) => {
+}: PreviewSectionProps<K>) => {
   const pathname = usePathname();
   const containerRef = useRef<HTMLDivElement>(null);
   const { width } = useDimensions(containerRef);
   const isEditor = pathname?.includes("/editor");
-  const TemplateResumeComponent = renderResumeTemplate(template);
-  const TemplateLetterComponent = renderLetterTemplate(template);
 
   const zoom = useMemo(() => {
     if (!width) return MIN_ZOOM;
@@ -52,12 +45,7 @@ export const PreviewSection = ({
             backgroundColor: "white",
           }}
         >
-          {componentType === "resume" ? (
-            <TemplateResumeComponent data={data} />
-          ) : (
-            // @ts-expect-error type error
-            <TemplateLetterComponent data={data} />
-          )}
+          <DocumentTemplate kind={kind} data={data} template={template} />
         </div>
       ) : (
         <div
@@ -66,12 +54,7 @@ export const PreviewSection = ({
             zoom: zoom,
           }}
         >
-          {componentType === "resume" ? (
-            <TemplateResumeComponent data={data} />
-          ) : (
-            // @ts-expect-error type error
-            <TemplateLetterComponent data={data} />
-          )}
+          <DocumentTemplate kind={kind} data={data} template={template} />
         </div>
       )}
     </div>

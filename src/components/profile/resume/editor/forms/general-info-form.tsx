@@ -19,13 +19,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { templates } from "@/constants";
-import { EditorFormProps } from "@/types/resume";
+import { EditorFormProps } from "@/types/document";
+import { ResumeData } from "@/types/resume";
 import { GeneralInfoFormValues, generalInfoSchema } from "./schema";
 
 export const GeneralInfoForm = ({
-  resumeData,
-  setResumeData,
-}: EditorFormProps) => {
+  data: resumeData,
+  setData: setResumeData,
+}: EditorFormProps<ResumeData>) => {
   const locale = useLocale();
   const form = useForm<GeneralInfoFormValues>({
     resolver: zodResolver(generalInfoSchema),

@@ -20,14 +20,15 @@ import { useTranslations } from "next-intl";
 import { useFieldArray, useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
-import { EditorFormProps } from "@/types/resume";
+import { EditorFormProps } from "@/types/document";
+import { ResumeData } from "@/types/resume";
 import { LanguageItem } from "./components/language-item";
 import { LanguageValues, languagesSchema } from "./schema";
 
 export const LanguagesForm = ({
-  resumeData,
-  setResumeData,
-}: EditorFormProps) => {
+  data: resumeData,
+  setData: setResumeData,
+}: EditorFormProps<ResumeData>) => {
   const t = useTranslations("Form");
 
   const form = useForm<LanguageValues>({

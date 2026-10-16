@@ -5,9 +5,13 @@ import { toast } from "sonner";
 import { generateSummaryGemini } from "@/app/actions/generate-summary-gemini";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { EditorFormProps } from "@/types/resume";
+import { EditorFormProps } from "@/types/document";
+import { ResumeData } from "@/types/resume";
 
-export const SummaryForm = ({ resumeData, setResumeData }: EditorFormProps) => {
+export const SummaryForm = ({
+  data: resumeData,
+  setData: setResumeData,
+}: EditorFormProps<ResumeData>) => {
   const [isGenerating, setIsGenerating] = useState(false);
   const t = useTranslations("Form");
   const locale = useLocale();

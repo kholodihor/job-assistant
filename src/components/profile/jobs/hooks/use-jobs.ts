@@ -1,5 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useResumeLogic } from "@/components/profile/hooks/use-resume-logic";
+import { resumeConfig } from "@/components/profile/resume/config";
+import {
+  getStoredDocument,
+  useDocumentCollection,
+} from "@/components/profile/shared/hooks/use-document-collection";
 
 type JobSource = "dou" | "linkedin";
 
@@ -48,15 +52,11 @@ export const useJobs = () => {
   const sourceRef = useRef<JobSource>("dou");
   const abortRef = useRef<AbortController | null>(null);
 
-  const { allResumes } = useResumeLogic();
+  const { allDocuments: allResumes } = useDocumentCollection(resumeConfig);
   const firstResume = allResumes[0];
 
   // Derive a primitive so effects don't depend on the resume object identity
-  const resumeData = firstResume
-    ? "isDuplicate" in firstResume
-      ? firstResume.data
-      : firstResume
-    : null;
+  const resumeData = firstResume ? getStoredDocument(firstResume) : null;
   const searchQuery = resumeData
     ? `${resumeData.profession} ${resumeData.skills?.slice(0, 3).join(" ")}`
     : "";

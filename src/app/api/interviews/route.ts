@@ -4,6 +4,7 @@ import { interviewFormSchema } from "@/components/profile/interview/forms/schema
 import { db } from "@/db";
 import { interviews } from "@/db/schema";
 import { getSessionUser, handleRouteError, unauthorized } from "@/lib/api";
+import { interviewQuestionsSchema } from "./schema";
 
 export async function POST(req: Request) {
   try {
@@ -12,6 +13,7 @@ export async function POST(req: Request) {
 
     const body = await req.json();
     const data = interviewFormSchema.parse(body.data);
+    const questions = interviewQuestionsSchema.optional().parse(body.questions);
 
     const [interview] = await db
       .insert(interviews)
@@ -20,6 +22,7 @@ export async function POST(req: Request) {
         jobDescription: data.description,
         jobExperience: data.yearsOfExperience,
         techStack: data.techStack || [],
+        questions: questions?.length ? questions : null,
         createdBy: user.id,
       })
       .returning();

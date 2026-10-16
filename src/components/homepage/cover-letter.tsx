@@ -37,7 +37,7 @@ export const CoverLetter: FC = () => {
         </div>
         <Image
           src="/images/cover_steps/cover_letter.webp"
-          alt="Cover letter"
+          alt={t("imageAlt")}
           width={400}
           height={400}
           className="w-[350px] flex-shrink-0 object-contain md:h-[320px] md:w-[352px] lg:h-[400px] lg:w-[400px]"

@@ -5,7 +5,8 @@ import { PersonalInfoForm } from "@/components/profile/resume/editor/forms/perso
 import { SkillsForm } from "@/components/profile/resume/editor/forms/skills-form";
 import { SummaryForm } from "@/components/profile/resume/editor/forms/summary-form";
 import { WorkExperienceForm } from "@/components/profile/resume/editor/forms/work-experience-form";
-import { EditorFormProps } from "@/types/resume";
+import { EditorStep } from "@/components/profile/shared/document-config";
+import { ResumeData } from "@/types/resume";
 
 export type StepKey =
   | "generalInfo"
@@ -16,11 +17,7 @@ export type StepKey =
   | "languages"
   | "summary";
 
-export const steps: {
-  titleKey: StepKey;
-  component: React.ComponentType<EditorFormProps>;
-  key: string;
-}[] = [
+export const steps: (EditorStep<ResumeData> & { titleKey: StepKey })[] = [
   {
     titleKey: "generalInfo",
     component: GeneralInfoForm,

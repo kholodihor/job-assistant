@@ -8,6 +8,7 @@ import {
   notFound,
   unauthorized,
 } from "@/lib/api";
+import { updateInterviewSchema } from "../schema";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -28,6 +29,27 @@ export async function GET(_req: Request, { params }: Params) {
     return NextResponse.json(interview);
   } catch (error) {
     return handleRouteError(error, "Failed to fetch interview");
+  }
+}
+
+export async function PATCH(req: Request, { params }: Params) {
+  try {
+    const user = await getSessionUser();
+    if (!user) return unauthorized();
+    const { id } = await params;
+
+    const { questions } = updateInterviewSchema.parse(await req.json());
+
+    const [interview] = await db
+      .update(interviews)
+      .set({ questions })
+      .where(ownedBy(id, user.id))
+      .returning();
+    if (!interview) return notFound("Interview not found");
+
+    return NextResponse.json(interview);
+  } catch (error) {
+    return handleRouteError(error, "Failed to update interview");
   }
 }
 

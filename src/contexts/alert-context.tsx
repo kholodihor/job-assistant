@@ -10,6 +10,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { useTranslations } from "next-intl";
 import { Alert } from "@/components/shared/alert";
 
 interface AlertOptions {
@@ -32,6 +33,7 @@ interface AlertContextType {
 const AlertContext = createContext<AlertContextType | undefined>(undefined);
 
 export const AlertProvider = ({ children }: { children: ReactNode }) => {
+  const t = useTranslations("Alert");
   const [alertOptions, setAlertOptions] = useState<AlertOptions | null>(null);
   const [isOpen, setIsOpen] = useState(false);
   const hideTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -84,8 +86,8 @@ export const AlertProvider = ({ children }: { children: ReactNode }) => {
         <Alert
           title={alertOptions.title}
           description={alertOptions.description}
-          cancelText={alertOptions.cancelText || "Cancel"}
-          confirmText={alertOptions.confirmText || "Confirm"}
+          cancelText={alertOptions.cancelText || t("cancel")}
+          confirmText={alertOptions.confirmText || t("confirm")}
           loadingText={alertOptions.loadingText}
           isLoading={alertOptions.isLoading}
           variant={alertOptions.variant}

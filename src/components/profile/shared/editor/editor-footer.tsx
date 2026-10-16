@@ -1,34 +1,35 @@
 import { FileUserIcon, PenLineIcon, Save } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { steps as letterSteps } from "@/components/profile/cover-letter/editor/steps";
-import { steps as resumeSteps } from "@/components/profile/shared/editor/steps";
 import { Button } from "@/components/ui/button";
+import { DocumentKind } from "@/types/document";
 
 interface FooterProps {
-  componentType: string;
+  kind: DocumentKind;
+  steps: { key: string }[];
   currentStep: string;
   setCurrentStep: (step: string) => void;
-  showMobileResumePreview: boolean;
-  setShowMobileResumePreview: (show: boolean) => void;
+  showMobilePreview: boolean;
+  setShowMobilePreview: (show: boolean) => void;
   isSaving?: boolean;
   isSavingToDb?: boolean;
   onSave?: () => void;
 }
 
 export const EditorFooter = ({
-  componentType,
+  kind,
+  steps,
   currentStep,
   setCurrentStep,
-  showMobileResumePreview,
-  setShowMobileResumePreview,
+  showMobilePreview,
+  setShowMobilePreview,
   isSaving,
   isSavingToDb,
   onSave,
 }: FooterProps) => {
   const t = useTranslations(
-    componentType === "resume" ? "Form.navigation" : "FormLetter.navigation"
+    kind === "resume" ? "Form.navigation" : "FormLetter.navigation"
   );
-  const steps = componentType === "resume" ? resumeSteps : letterSteps;
+  const isLastStep = currentStep === steps.at(-1)?.key;
 
   const previousStep = steps.find(
     (_, index) => steps[index + 1]?.key === currentStep
@@ -68,22 +69,18 @@ export const EditorFooter = ({
             <span className="text-sm text-gray-500 sm:ml-4">{t("saving")}</span>
           )}
 
-          {onSave && (currentStep === "summary" || currentStep === "text") && (
+          {onSave && isLastStep && (
             <Button
               onClick={onSave}
               disabled={isSavingToDb}
               className="flex min-w-[120px] items-center justify-center gap-2 transition-colors hover:bg-blue-100/50"
             >
               <Save className="h-4 w-4" />
-              {componentType === "resume" ? (
-                <span className="hidden sm:inline">
-                  {isSavingToDb ? t("saving") : t("saveResume")}
-                </span>
-              ) : (
-                <span className="hidden sm:inline">
-                  {isSavingToDb ? t("saving") : t("saveLetter")}
-                </span>
-              )}
+              <span className="hidden sm:inline">
+                {isSavingToDb
+                  ? t("saving")
+                  : t(kind === "resume" ? "saveResume" : "saveLetter")}
+              </span>
               <span className="sm:hidden">
                 {isSavingToDb ? t("saving") : t("save")}
               </span>
@@ -93,11 +90,11 @@ export const EditorFooter = ({
           <Button
             variant="outline"
             size="icon"
-            onClick={() => setShowMobileResumePreview(!showMobileResumePreview)}
+            onClick={() => setShowMobilePreview(!showMobilePreview)}
             className="h-10 w-10 xl:hidden"
             title={t("togglePreview")}
           >
-            {showMobileResumePreview ? (
+            {showMobilePreview ? (
               <PenLineIcon className="h-4 w-4" />
             ) : (
               <FileUserIcon className="h-4 w-4" />

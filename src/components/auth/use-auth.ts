@@ -1,6 +1,6 @@
 "use client";
 
-import { Locale } from "@/i18n/routing";
+import { useTranslations } from "next-intl";
 import { authClient } from "@/lib/auth-client";
 import { getAuthErrorMessage } from "@/utils/auth-errors";
 
@@ -17,7 +17,8 @@ type SignUpParams = {
   name: string;
 };
 
-export const useSignIn = (lang: Locale) => {
+export const useSignIn = () => {
+  const tErrors = useTranslations("Auth.authErrors");
   const signIn = async ({
     email,
     password,
@@ -34,7 +35,7 @@ export const useSignIn = (lang: Locale) => {
     if (error) {
       return {
         ok: false as const,
-        message: getAuthErrorMessage(error, "signin", lang),
+        message: getAuthErrorMessage(error, "signin", tErrors),
       };
     }
 
@@ -44,7 +45,8 @@ export const useSignIn = (lang: Locale) => {
   return { signIn };
 };
 
-export const useSignUp = (lang: Locale) => {
+export const useSignUp = () => {
+  const tErrors = useTranslations("Auth.authErrors");
   const signUp = async ({ email, password, name }: SignUpParams) => {
     const { error } = await authClient.signUp.email({
       email,
@@ -55,7 +57,7 @@ export const useSignUp = (lang: Locale) => {
     if (error) {
       return {
         ok: false as const,
-        message: getAuthErrorMessage(error, "register", lang),
+        message: getAuthErrorMessage(error, "register", tErrors),
       };
     }
 

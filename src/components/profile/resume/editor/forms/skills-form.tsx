@@ -12,10 +12,14 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
-import { EditorFormProps } from "@/types/resume";
+import { EditorFormProps } from "@/types/document";
+import { ResumeData } from "@/types/resume";
 import { SkillsValues, skillsSchema } from "./schema";
 
-export const SkillsForm = ({ resumeData, setResumeData }: EditorFormProps) => {
+export const SkillsForm = ({
+  data: resumeData,
+  setData: setResumeData,
+}: EditorFormProps<ResumeData>) => {
   const t = useTranslations("Form");
   const form = useForm<SkillsValues>({
     resolver: zodResolver(skillsSchema),

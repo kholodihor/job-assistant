@@ -19,13 +19,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { lettersTemplates } from "@/constants";
-import { EditorFormProps } from "@/types/letter";
+import { EditorFormProps } from "@/types/document";
+import { LetterData } from "@/types/letter";
 import { GeneralInfoFormValues, generalInfoSchema } from "./schema";
 
 export const GeneralInfoForm = ({
-  letterData,
-  setLetterData,
-}: EditorFormProps) => {
+  data: letterData,
+  setData: setLetterData,
+}: EditorFormProps<LetterData>) => {
   const locale = useLocale();
   const form = useForm<GeneralInfoFormValues>({
     resolver: zodResolver(generalInfoSchema),

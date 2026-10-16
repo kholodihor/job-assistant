@@ -1,29 +1,22 @@
 import Image from "next/image";
 import { useTranslations } from "next-intl";
-import { ResumeData } from "@/types/resume";
-import {
-  renderLetterTemplate,
-  renderResumeTemplate,
-} from "@/utils/render-template";
+import { DocumentKind } from "@/types/document";
+import { DocumentTemplate, PreviewDocument } from "./document-template";
 
-interface MobilePreviewProps {
-  data: ResumeData;
+type MobilePreviewProps<K extends DocumentKind> = PreviewDocument<K> & {
   template: string;
   onClose: () => void;
-  componentType: string;
-}
+};
 
-export const MobilePreview = ({
-  componentType,
+export const MobilePreview = <K extends DocumentKind>({
+  kind,
   data,
   template,
   onClose,
-}: MobilePreviewProps) => {
+}: MobilePreviewProps<K>) => {
   const t = useTranslations(
-    componentType === "resume" ? "ResumePage" : "CoverLetterPage"
+    kind === "resume" ? "ResumePage" : "CoverLetterPage"
   );
-  const ResumeTemplate = renderResumeTemplate(template);
-  const LetterTemplate = renderLetterTemplate(template);
 
   return (
     <div className="absolute left-0 top-0 z-50 h-full w-full bg-white/70 backdrop-blur-sm xl:hidden">
@@ -45,12 +38,7 @@ export const MobilePreview = ({
       <div className="no-scrollbar h-[calc(100vh-56px)] overflow-y-auto">
         <div className="mx-auto flex justify-center p-3">
           <div className="w-full max-w-[800px]">
-            {componentType === "resume" ? (
-              <ResumeTemplate data={data} />
-            ) : (
-              // @ts-expect-error type error
-              <LetterTemplate data={data} />
-            )}
+            <DocumentTemplate kind={kind} data={data} template={template} />
           </div>
         </div>
       </div>

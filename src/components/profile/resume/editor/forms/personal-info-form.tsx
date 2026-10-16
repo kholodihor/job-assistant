@@ -12,7 +12,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { EditorFormProps } from "@/types/resume";
+import { EditorFormProps } from "@/types/document";
+import { ResumeData } from "@/types/resume";
 import { personalInfoSchema } from "./schema";
 
 const convertToBase64 = (file: File): Promise<string> => {
@@ -25,9 +26,9 @@ const convertToBase64 = (file: File): Promise<string> => {
 };
 
 export const PersonalInfoForm = ({
-  resumeData,
-  setResumeData,
-}: EditorFormProps) => {
+  data: resumeData,
+  setData: setResumeData,
+}: EditorFormProps<ResumeData>) => {
   const t = useTranslations("Form");
 
   const form = useForm({

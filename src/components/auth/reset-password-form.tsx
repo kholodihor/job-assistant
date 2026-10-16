@@ -20,20 +20,20 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Locale, useRouter } from "@/i18n/routing";
+import { useRouter } from "@/i18n/routing";
 import { PasswordInput } from "./password-input";
 import { ResetPasswordFormValues, resetPasswordSchema } from "./schema";
 
 interface ResetPasswordFormProps {
   token: string;
-  lang: Locale;
 }
 
-export function ResetPasswordForm({ token, lang }: ResetPasswordFormProps) {
+export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
   const [error, setError] = useState<string>("");
   const [success, setSuccess] = useState(false);
   const router = useRouter();
   const tAuth = useTranslations("Auth");
+  const t = useTranslations("Auth.resetPassword");
   const redirectTimer = useRef<ReturnType<typeof setTimeout>>();
 
   useEffect(() => () => clearTimeout(redirectTimer.current), []);
@@ -65,12 +65,7 @@ export function ResetPasswordForm({ token, lang }: ResetPasswordFormProps) {
         .catch(() => ({}));
 
       if (!response.ok) {
-        throw new Error(
-          result.error ||
-            (lang === "en"
-              ? "Failed to reset password"
-              : "Помилка при зміні паролю")
-        );
+        throw new Error(result.error || t("failedToReset"));
       }
 
       setSuccess(true);
@@ -79,13 +74,7 @@ export function ResetPasswordForm({ token, lang }: ResetPasswordFormProps) {
         router.push("/signin");
       }, 2000);
     } catch (err) {
-      setError(
-        err instanceof Error
-          ? err.message
-          : lang === "en"
-            ? "Failed to reset password"
-            : "Помилка при зміні паролю"
-      );
+      setError(err instanceof Error ? err.message : t("failedToReset"));
     }
   };
 
@@ -95,12 +84,10 @@ export function ResetPasswordForm({ token, lang }: ResetPasswordFormProps) {
         <Card className="w-[90%] max-w-md p-6">
           <CardHeader>
             <CardTitle className="text-center text-xl text-green-600">
-              {lang === "en" ? "Success!" : "Успішно!"}
+              {t("success")}
             </CardTitle>
             <CardDescription className="text-center">
-              {lang === "en"
-                ? "Your password has been successfully reset. Redirecting to login..."
-                : "Ваш пароль успішно змінено. Перенаправлення на сторінку входу..."}
+              {t("successDescription")}
             </CardDescription>
           </CardHeader>
         </Card>
@@ -113,10 +100,10 @@ export function ResetPasswordForm({ token, lang }: ResetPasswordFormProps) {
       <Card className="w-full max-w-[600px] p-4 sm:p-[50px]">
         <CardHeader className="mb-8 p-0">
           <CardTitle className="text-center text-2xl font-semibold">
-            {lang === "en" ? "Reset Your Password" : "Відновити пароль"}
+            {t("title")}
           </CardTitle>
           <CardDescription className="text-black text-center text-base sm:text-lg">
-            {lang === "en" ? "Create new password" : "Створіть новий пароль"}
+            {t("subtitle")}
           </CardDescription>
         </CardHeader>
         <CardContent className="p-0">
@@ -138,14 +125,10 @@ export function ResetPasswordForm({ token, lang }: ResetPasswordFormProps) {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-lg font-normal">
-                        {lang === "en" ? "New Password" : "Новий пароль"}
+                        {t("newPassword")}
                       </FormLabel>
                       <PasswordInput
-                        placeholder={
-                          lang === "en"
-                            ? "Enter your new password"
-                            : "Введіть новий пароль"
-                        }
+                        placeholder={t("newPasswordPlaceholder")}
                         {...field}
                         className={`rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:border-blue-500 focus:ring-blue-500 ${
                           form.formState.errors.password
@@ -167,16 +150,10 @@ export function ResetPasswordForm({ token, lang }: ResetPasswordFormProps) {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-lg font-normal">
-                        {lang === "en"
-                          ? "Confirm Password"
-                          : "Підтвердіть пароль"}
+                        {t("confirmPassword")}
                       </FormLabel>
                       <PasswordInput
-                        placeholder={
-                          lang === "en"
-                            ? "Confirm your new password"
-                            : "Підтвердіть новий пароль"
-                        }
+                        placeholder={t("confirmPasswordPlaceholder")}
                         {...field}
                         className={`rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:border-blue-500 focus:ring-blue-500 ${
                           form.formState.errors.confirmPassword
@@ -196,12 +173,8 @@ export function ResetPasswordForm({ token, lang }: ResetPasswordFormProps) {
                     disabled={form.formState.isSubmitting}
                   >
                     {form.formState.isSubmitting
-                      ? lang === "en"
-                        ? "Processing..."
-                        : "Обробка..."
-                      : lang === "en"
-                        ? "Reset Password"
-                        : "Змінити пароль"}
+                      ? tAuth("processing")
+                      : t("submit")}
                   </Button>
                   <Button
                     type="button"
@@ -210,7 +183,7 @@ export function ResetPasswordForm({ token, lang }: ResetPasswordFormProps) {
                     disabled={form.formState.isSubmitting}
                     variant="outline"
                   >
-                    {lang === "en" ? "Cancel" : "Скасувати"}
+                    {tAuth("cancel")}
                   </Button>
                 </div>
               </form>

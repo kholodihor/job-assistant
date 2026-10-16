@@ -1,5 +1,5 @@
 import { usePathname } from "next/navigation";
-import { Icon } from "@/components/shared/icon";
+import { Icon, type IconName } from "@/components/shared/icon";
 import { Link } from "@/i18n/routing";
 import { useSession } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
@@ -7,7 +7,7 @@ import { Avatar } from "./avatar";
 
 interface HorizontalNavLinkProps {
   href: string;
-  iconName: string;
+  iconName: IconName;
   isActive: boolean;
 }
 

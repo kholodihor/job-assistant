@@ -1,5 +1,5 @@
 import { Building2, ExternalLink, MapPin } from "lucide-react";
-import { useLocale } from "next-intl";
+import { useTranslations } from "next-intl";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -21,7 +21,7 @@ interface JobCardProps {
 }
 
 export const JobCard = ({ job }: JobCardProps) => {
-  const locale = useLocale();
+  const t = useTranslations("Jobs");
 
   return (
     <Card className="group w-full transition-all duration-300 hover:shadow-lg">
@@ -64,9 +64,7 @@ export const JobCard = ({ job }: JobCardProps) => {
               rel="noopener noreferrer"
               className="inline-flex items-center"
             >
-              <span>
-                {locale === "en" ? "View Details" : "Переглянути деталі"}
-              </span>
+              <span>{t("viewDetails")}</span>
               <ExternalLink className="h-4 w-4 transition-transform group-hover/button:translate-x-1" />
             </a>
           </Button>

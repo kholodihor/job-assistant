@@ -12,14 +12,3 @@ export interface LetterData {
   text: string;
   template?: string;
 }
-
-export interface ILetter extends LetterData {
-  id: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface EditorFormProps {
-  letterData: LetterData;
-  setLetterData: (data: LetterData) => void;
-}

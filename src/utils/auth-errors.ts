@@ -1,11 +1,10 @@
-import { Locale } from "@/i18n/routing";
-
 export type AuthContext = "register" | "signin";
 
+// `t` is a translator scoped to the "Auth.authErrors" namespace.
 export const getAuthErrorMessage = (
   error: unknown,
   context: AuthContext,
-  lang: Locale
+  t: (key: string) => string
 ): string => {
   const isError = (err: unknown): err is Error => err instanceof Error;
 
@@ -18,9 +17,7 @@ export const getAuthErrorMessage = (
     error.name === "TypeError" &&
     error.message.includes("fetch")
   ) {
-    return lang === "en"
-      ? "Network error. Please check your connection and try again."
-      : "Помилка мережі. Перевірте підключення та спробуйте ще раз.";
+    return t("network");
   }
 
   // Timeout errors
@@ -28,16 +25,12 @@ export const getAuthErrorMessage = (
     isError(error) &&
     (error.name === "AbortError" || error.message?.includes("timeout"))
   ) {
-    return lang === "en"
-      ? "Request timed out. Please try again."
-      : "Час очікування вичерпано. Спробуйте ще раз.";
+    return t("timeout");
   }
 
   // Rate limiting
   if (isErrorObject(error) && error.status === 429) {
-    return lang === "en"
-      ? "Too many attempts. Please wait a few minutes before trying again."
-      : "Забагато спроб. Зачекайте кілька хвилин перед повторною спробою.";
+    return t("rateLimited");
   }
 
   // Server errors
@@ -46,9 +39,7 @@ export const getAuthErrorMessage = (
     typeof error.status === "number" &&
     error.status >= 500
   ) {
-    return lang === "en"
-      ? "Server error. Please try again later."
-      : "Помилка сервера. Спробуйте пізніше.";
+    return t("serverError");
   }
 
   // Sign-in specific errors
@@ -69,21 +60,15 @@ export const getAuthErrorMessage = (
         /invalid credentials/i.test(messageStr) ||
         /wrong email or password/i.test(messageStr)
       ) {
-        return lang === "en"
-          ? "Email or password is incorrect. Please check your credentials and try again."
-          : "Невірний email або пароль. Перевірте свої дані та спробуйте ще раз.";
+        return t("invalidCredentials");
       }
 
       if (codeStr === "USER_NOT_FOUND") {
-        return lang === "en"
-          ? "No account found for this email. Please register first or use a different email."
-          : "Обліковий запис з таким email не знайдено. Зареєструйтеся або використайте інший email.";
+        return t("userNotFound");
       }
 
       if (codeStr === "ACCOUNT_DISABLED") {
-        return lang === "en"
-          ? "Your account has been disabled. Please contact support if you think this is a mistake."
-          : "Ваш обліковий запис було відключено. Зверніться в підтримку, якщо вважаєте, що це помилка.";
+        return t("accountDisabled");
       }
 
       if (messageStr) {
@@ -100,31 +85,21 @@ export const getAuthErrorMessage = (
 
     switch (codeStr) {
       case "USER_ALREADY_EXISTS":
-        return lang === "en"
-          ? "This email is already registered. Please use a different email or sign in."
-          : "Цей email вже зареєстрований. Використайте інший email або увійдіть.";
+        return t("emailExists");
       case "VALIDATION_ERROR":
-        return lang === "en"
-          ? "Please check your input data and try again."
-          : "Перевірте введені дані та спробуйте ще раз.";
+        return t("validationError");
       case "SIGN_IN_AFTER_REGISTER_FAILED":
       case "INTERNAL_SERVER_ERROR":
-        return lang === "en"
-          ? "Server error during registration. Please try again later."
-          : "Помилка сервера під час реєстрації. Спробуйте пізніше.";
+        return t("registrationServerError");
       default:
         break;
     }
 
     if (errorStr.includes("email") || messageStr.includes("email")) {
-      return lang === "en"
-        ? "This email is already registered. Please use a different email or sign in."
-        : "Цей email вже зареєстрований. Використайте інший email або увійдіть.";
+      return t("emailExists");
     }
     if (errorStr.includes("validation") || messageStr.includes("validation")) {
-      return lang === "en"
-        ? "Please check your input data and try again."
-        : "Перевірте введені дані та спробуйте ще раз.";
+      return t("validationError");
     }
   }
 
@@ -140,12 +115,8 @@ export const getAuthErrorMessage = (
 
   return (
     errorMessage ||
-    (lang === "en"
-      ? `${
-          context === "register" ? "Registration" : "Authentication"
-        } failed. Please try again.`
-      : `${
-          context === "register" ? "Реєстрація" : "Авторизація"
-        } не вдалася. Спробуйте ще раз.`)
+    (context === "register"
+      ? t("registrationFailed")
+      : t("authenticationFailed"))
   );
 };

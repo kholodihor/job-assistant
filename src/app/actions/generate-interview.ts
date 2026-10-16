@@ -1,6 +1,7 @@
 "use server";
 
 import { InterviewFormValues } from "@/components/profile/interview/forms/schema";
+import type { InterviewQuestion } from "@/db/schema/interviews";
 import { requireSessionUser } from "@/lib/api";
 import { getGeminiModel, parseJsonResponse } from "@/lib/gemini";
 
@@ -10,11 +11,6 @@ const generationConfig = {
   topK: 40,
   maxOutputTokens: 8192,
 };
-
-export interface InterviewQuestion {
-  Question: string;
-  Answer: string;
-}
 
 export interface InterviewResponse {
   questions: InterviewQuestion[];

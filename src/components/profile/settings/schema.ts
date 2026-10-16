@@ -1,48 +1,29 @@
 import { z } from "zod";
-import { Locale } from "@/i18n/routing";
 
-export const changeNameSchema = (lang: Locale) =>
+// `t` is a translator scoped to the "Settings.validation" namespace.
+export const changeNameSchema = (t: (key: string) => string) =>
   z.object({
     name: z.string().min(2, {
-      message:
-        lang === "en"
-          ? "Name should be at least 2 symbols"
-          : "Ім'я повинно мати не менше двох символів",
+      message: t("nameMin"),
     }),
-    email: z
-      .string()
-      .email(
-        lang === "en"
-          ? "Please enter a valid email address"
-          : "Будь ласка, введіть дійсну електронну адресу"
-      ),
+    email: z.string().email(t("invalidEmail")),
   });
 
-export const changePasswordSchema = (lang: Locale) =>
+export const changePasswordSchema = (t: (key: string) => string) =>
   z
     .object({
       oldPassword: z.string().min(8, {
-        message:
-          lang === "en"
-            ? "Password must be at least 8 characters"
-            : "Пароль повинен містити щонайменше 8 символів",
+        message: t("passwordMinLength"),
       }),
       newPassword: z.string().min(8, {
-        message:
-          lang === "en"
-            ? "Password must be at least 8 characters"
-            : "Пароль повинен містити щонайменше 8 символів",
+        message: t("passwordMinLength"),
       }),
       repeatNewPassword: z.string().min(8, {
-        message:
-          lang === "en"
-            ? "Password must be at least 8 characters"
-            : "Пароль повинен містити щонайменше 8 символів",
+        message: t("passwordMinLength"),
       }),
     })
     .refine((data) => data.newPassword === data.repeatNewPassword, {
-      message:
-        lang === "en" ? "Passwords must match" : "Паролі повинні співпадати",
+      message: t("passwordsMatch"),
       path: ["repeatNewPassword"],
     });
 

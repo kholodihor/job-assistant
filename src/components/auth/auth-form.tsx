@@ -18,7 +18,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Link, Locale } from "@/i18n/routing";
+import { Link } from "@/i18n/routing";
 import { getAuthErrorMessage } from "@/utils/auth-errors";
 import { Checkbox } from "../ui/checkbox";
 import { PasswordInput } from "./password-input";
@@ -29,16 +29,16 @@ import { useSignIn, useSignUp } from "./use-auth";
 
 interface AuthFormProps {
   type: "signin" | "register";
-  lang: Locale;
 }
 
-export function AuthForm({ type, lang }: AuthFormProps) {
+export function AuthForm({ type }: AuthFormProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = getSafeCallbackUrl(searchParams.get("callbackUrl"));
   const [isLoading, setIsLoading] = useState(false);
   const tAuth = useTranslations("Auth");
-  const passwordLabel = lang === "en" ? "Password" : "Пароль";
+  const tErrors = useTranslations("Auth.authErrors");
+  const passwordLabel = tAuth("password");
 
   const form = useForm<z.infer<ReturnType<typeof authFormSchema>>>({
     resolver: zodResolver(authFormSchema(type === "register")),
@@ -55,10 +55,10 @@ export function AuthForm({ type, lang }: AuthFormProps) {
   const getErrorMessage = (
     error: unknown,
     context: "register" | "signin"
-  ): string => getAuthErrorMessage(error, context, lang);
+  ): string => getAuthErrorMessage(error, context, tErrors);
 
-  const { signIn } = useSignIn(lang);
-  const { signUp } = useSignUp(lang);
+  const { signIn } = useSignIn();
+  const { signUp } = useSignUp();
 
   const handleRegisterSubmit = async (
     data: z.infer<ReturnType<typeof authFormSchema>>
@@ -78,7 +78,7 @@ export function AuthForm({ type, lang }: AuthFormProps) {
     }
 
     // Success: user is automatically signed in
-    toast.success(lang === "en" ? "Welcome!" : "Ласкаво просимо!");
+    toast.success(tAuth("welcome"));
     router.push(callbackUrl);
     router.refresh();
   };
@@ -102,7 +102,7 @@ export function AuthForm({ type, lang }: AuthFormProps) {
     }
 
     // Success
-    toast.success(lang === "en" ? "Welcome back!" : "Ласкаво просимо!");
+    toast.success(tAuth("welcomeBack"));
     router.push(callbackUrl);
     router.refresh();
   };
@@ -133,12 +133,8 @@ export function AuthForm({ type, lang }: AuthFormProps) {
       <div className="relative">
         <p className="relative my-6 flex justify-center text-base font-semibold">
           {type === "register"
-            ? lang === "en"
-              ? "or register using email"
-              : "або зареєструйтесь за допомогою email"
-            : lang === "en"
-              ? "or use email"
-              : "або скористайтеся email"}
+            ? tAuth("orRegisterWithEmail")
+            : tAuth("orUseEmail")}
         </p>
       </div>
 
@@ -202,29 +198,23 @@ export function AuthForm({ type, lang }: AuthFormProps) {
                           onCheckedChange={field.onChange}
                         />
                         <p className="text-black text-small">
-                          {lang === "en" ? "I agree with " : "Я погоджуюся з "}
+                          {tAuth("agreePrefix")}
                           <a
                             href="/Правила користування сайтом.pdf"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="text-blue-500 hover:text-blue-700"
                           >
-                            {lang === "en"
-                              ? "Terms of service "
-                              : "Умовами надання послуг "}
+                            {tAuth("termsOfService")}
                           </a>
-                          {lang === "en"
-                            ? "and agree with "
-                            : "і погоджуюся з "}
+                          {tAuth("andAgreeWith")}
                           <a
                             href="/Політика конфіденційності.pdf"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="text-blue-500 hover:text-blue-700"
                           >
-                            {lang === "en"
-                              ? "Privacy policy"
-                              : "Політикою конфіденційності"}
+                            {tAuth("privacyPolicy")}
                           </a>
                         </p>
                       </label>
@@ -249,7 +239,7 @@ export function AuthForm({ type, lang }: AuthFormProps) {
                     />
                   </FormControl>
                   <FormLabel className="text-sm font-normal">
-                    {lang === "en" ? "Remember me" : "Запам'ятати мене"}
+                    {tAuth("rememberMe")}
                   </FormLabel>
                 </FormItem>
               )}
@@ -268,24 +258,14 @@ export function AuthForm({ type, lang }: AuthFormProps) {
                 <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
                 <span>
                   {type === "signin"
-                    ? lang === "en"
-                      ? "Signing in..."
-                      : "Вхід..."
-                    : lang === "en"
-                      ? "Registering..."
-                      : "Реєстрація..."}
+                    ? tAuth("signingIn")
+                    : tAuth("registering")}
                 </span>
               </div>
             ) : type === "signin" ? (
-              lang === "en" ? (
-                "Sign In"
-              ) : (
-                "Увійти"
-              )
-            ) : lang === "en" ? (
-              "Register"
+              tAuth("signIn")
             ) : (
-              "Зареєструватися"
+              tAuth("register")
             )}
           </Button>
 
@@ -294,7 +274,7 @@ export function AuthForm({ type, lang }: AuthFormProps) {
               href={`/forgot-password`}
               className="mt-2 text-center text-sm text-blue-500 hover:text-blue-700"
             >
-              {lang === "en" ? "Forgot password?" : "Забули пароль?"}
+              {tAuth("forgotPasswordLink")}
             </Link>
           )}
         </form>
@@ -302,30 +282,22 @@ export function AuthForm({ type, lang }: AuthFormProps) {
 
       {type === "signin" ? (
         <div className="mt-6 flex flex-col items-center text-sm md:text-lg">
-          <h4>
-            {lang === "en"
-              ? "Don't have an account?"
-              : "Не маєте облікового запису?"}
-          </h4>
+          <h4>{tAuth("noAccount")}</h4>
           <Link
             href="register"
             className="mt-3 text-blue-500 hover:border-blue-500 hover:text-blue-700"
           >
-            {lang === "en" ? "Register" : "Зареєструватися"}
+            {tAuth("register")}
           </Link>
         </div>
       ) : (
         <div className="mt-6 flex flex-col items-center text-sm md:text-lg">
-          <h4>
-            {lang === "en"
-              ? "Already have an account?"
-              : "Вже маєте обліковий запис?"}
-          </h4>
+          <h4>{tAuth("haveAccount")}</h4>
           <Link
             href="signin"
             className="mt-3 text-blue-500 hover:border-blue-500 hover:text-blue-700"
           >
-            {lang === "en" ? "Sign In" : "Увійти"}
+            {tAuth("signIn")}
           </Link>
         </div>
       )}

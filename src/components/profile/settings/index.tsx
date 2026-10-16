@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useSession } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
@@ -8,6 +9,7 @@ import { ChangeForm } from "./change-name";
 import { ChangePassword } from "./change-password";
 
 export const Settings = () => {
+  const t = useTranslations("Settings");
   const { data: session } = useSession();
   const [qAuth, setQAuth] = useState(false);
   useEffect(() => {
@@ -21,13 +23,15 @@ export const Settings = () => {
 
   return (
     <div className="min-h-[70vh] p-[24px]">
-      <p className="mb-10 text-h3">Мій профіль</p>
+      <p className="mb-10 text-h3">{t("title")}</p>
       <Tabs defaultValue="tab1">
         <TabsList>
           <TabsTrigger className={cn(!qAuth && "mr-2")} value="tab1">
-            Change name
+            {t("tabs.changeName")}
           </TabsTrigger>
-          {!qAuth && <TabsTrigger value="tab2">Change password</TabsTrigger>}
+          {!qAuth && (
+            <TabsTrigger value="tab2">{t("tabs.changePassword")}</TabsTrigger>
+          )}
         </TabsList>
         <TabsContent value="tab1">
           <ChangeForm />
