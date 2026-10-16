@@ -28,6 +28,7 @@ export const GeneralInfoForm = ({
   setData: setLetterData,
 }: EditorFormProps<LetterData>) => {
   const t = useTranslations("FormLetter.generalInfo");
+  const tTemplates = useTranslations("Templates");
   const form = useForm<GeneralInfoFormValues>({
     resolver: zodResolver(generalInfoSchema),
     defaultValues: {
@@ -82,10 +83,10 @@ export const GeneralInfoForm = ({
                   </FormControl>
                   <SelectContent>
                     <SelectItem value={lettersTemplates.SHORT}>
-                      Short
+                      {tTemplates("short")}
                     </SelectItem>
                     <SelectItem value={lettersTemplates.DETAILED}>
-                      Detailed
+                      {tTemplates("detailed")}
                     </SelectItem>
                   </SelectContent>
                 </Select>

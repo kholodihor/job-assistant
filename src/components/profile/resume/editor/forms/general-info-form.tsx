@@ -28,6 +28,7 @@ export const GeneralInfoForm = ({
   setData: setResumeData,
 }: EditorFormProps<ResumeData>) => {
   const t = useTranslations("Form.generalInfo");
+  const tTemplates = useTranslations("Templates");
   const form = useForm<GeneralInfoFormValues>({
     resolver: zodResolver(generalInfoSchema),
     defaultValues: {
@@ -81,9 +82,11 @@ export const GeneralInfoForm = ({
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value={templates.CLASSIC}>Classic</SelectItem>
+                    <SelectItem value={templates.CLASSIC}>
+                      {tTemplates("classic")}
+                    </SelectItem>
                     <SelectItem value={templates.MODERN_DARK}>
-                      Modern Dark
+                      {tTemplates("modernDark")}
                     </SelectItem>
                   </SelectContent>
                 </Select>

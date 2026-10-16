@@ -10,6 +10,18 @@ export interface SavedDocumentInfo {
   publicId?: string;
 }
 
+/** next-intl namespaces and keys that differ per document kind */
+export interface DocumentI18n {
+  /** Namespace with the editor step titles, e.g. "Form.steps" */
+  steps: string;
+  /** Namespace with the footer navigation labels, e.g. "Form.navigation" */
+  navigation: string;
+  /** Namespace of the preview labels, e.g. "ResumePage" */
+  preview: string;
+  /** Key in `navigation` for the save button label, e.g. "saveResume" */
+  saveLabel: string;
+}
+
 /** Everything that differs between the resume and cover-letter features. */
 export interface DocumentConfig<K extends DocumentKind> {
   kind: K;
@@ -46,6 +58,8 @@ export interface DocumentConfig<K extends DocumentKind> {
     saveFailed: string;
     saveSuccess: string;
   };
+  /** Translation namespaces and keys used by the editor UI */
+  i18n: DocumentI18n;
 }
 
 /** One editor step: a breadcrumb title (translation key) and its form */

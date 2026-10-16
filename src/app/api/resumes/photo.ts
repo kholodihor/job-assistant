@@ -23,7 +23,9 @@ export async function resolvePhoto(
   }
 
   // Unchanged photo URL: keep what is stored.
-  return existing?.photo === photo
-    ? existing
-    : { photo, publicId: existing?.publicId ?? null };
+  if (existing?.photo === photo) return existing;
+
+  // Replaced by a plain URL: the old upload is no longer referenced.
+  if (existing?.publicId) await deleteImage(existing.publicId);
+  return { photo, publicId: null };
 }

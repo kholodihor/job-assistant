@@ -1,11 +1,13 @@
 import Image from "next/image";
 import { useTranslations } from "next-intl";
+import { DocumentI18n } from "@/components/profile/shared/document-config";
 import { DocumentKind } from "@/types/document";
 import { DocumentTemplate, PreviewDocument } from "./document-template";
 
 type MobilePreviewProps<K extends DocumentKind> = PreviewDocument<K> & {
   template: string;
   onClose: () => void;
+  i18n: DocumentI18n;
 };
 
 export const MobilePreview = <K extends DocumentKind>({
@@ -13,10 +15,9 @@ export const MobilePreview = <K extends DocumentKind>({
   data,
   template,
   onClose,
+  i18n,
 }: MobilePreviewProps<K>) => {
-  const t = useTranslations(
-    kind === "resume" ? "ResumePage" : "CoverLetterPage"
-  );
+  const t = useTranslations(i18n.preview);
 
   return (
     <div className="absolute left-0 top-0 z-50 h-full w-full bg-white/70 backdrop-blur-sm xl:hidden">

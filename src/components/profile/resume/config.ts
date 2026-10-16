@@ -81,4 +81,10 @@ export const resumeConfig: DocumentConfig<"resume"> = {
     saveFailed: "resume.messages.saveFailed",
     saveSuccess: "resume.messages.saveSuccess",
   },
+  i18n: {
+    steps: "Form.steps",
+    navigation: "Form.navigation",
+    preview: "ResumePage",
+    saveLabel: "saveResume",
+  },
 };

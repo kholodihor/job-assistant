@@ -714,5 +714,11 @@
   "Common": {
     "loading": "Loading...",
     "requiredFieldsError": "Please fill in all required fields ({fields})"
+  },
+  "Templates": {
+    "classic": "Classic",
+    "modernDark": "Modern Dark",
+    "detailed": "Detailed",
+    "short": "Short"
   }
 }

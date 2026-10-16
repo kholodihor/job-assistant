@@ -714,5 +714,11 @@
   "Common": {
     "loading": "Завантаження...",
     "requiredFieldsError": "Будь ласка, заповніть усі обов'язкові поля ({fields})"
+  },
+  "Templates": {
+    "classic": "Класичний",
+    "modernDark": "Сучасний темний",
+    "detailed": "Детальний",
+    "short": "Короткий"
   }
 }

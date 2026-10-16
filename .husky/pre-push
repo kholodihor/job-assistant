@@ -1,1 +1,1 @@
-npm run ts-check && npm run lint
+npm run ts-check && npm run lint && npm test

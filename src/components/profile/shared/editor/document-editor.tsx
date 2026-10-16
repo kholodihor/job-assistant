@@ -60,7 +60,7 @@ export const DocumentEditor = <K extends DocumentKind>({
     <div className="flex w-full flex-col pt-[4rem] lg:pt-0 xl:flex-row">
       <div className="mx-auto flex h-[94vh] w-full flex-col justify-between xl:w-1/2">
         <Breadcrumbs
-          kind={config.kind}
+          i18n={config.i18n}
           steps={steps}
           currentStep={currentStep}
           setCurrentStep={setStep}
@@ -71,7 +71,7 @@ export const DocumentEditor = <K extends DocumentKind>({
           </div>
         )}
         <EditorFooter
-          kind={config.kind}
+          i18n={config.i18n}
           steps={steps}
           currentStep={currentStep}
           setCurrentStep={setStep}
@@ -88,6 +88,7 @@ export const DocumentEditor = <K extends DocumentKind>({
       {showMobilePreview && (
         <MobilePreview
           kind={config.kind}
+          i18n={config.i18n}
           data={data}
           template={template}
           onClose={() => setShowMobilePreview(false)}

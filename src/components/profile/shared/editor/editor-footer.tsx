@@ -1,10 +1,10 @@
 import { FileUserIcon, PenLineIcon, Save } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { DocumentI18n } from "@/components/profile/shared/document-config";
 import { Button } from "@/components/ui/button";
-import { DocumentKind } from "@/types/document";
 
 interface FooterProps {
-  kind: DocumentKind;
+  i18n: DocumentI18n;
   steps: { key: string }[];
   currentStep: string;
   setCurrentStep: (step: string) => void;
@@ -16,7 +16,7 @@ interface FooterProps {
 }
 
 export const EditorFooter = ({
-  kind,
+  i18n,
   steps,
   currentStep,
   setCurrentStep,
@@ -26,9 +26,7 @@ export const EditorFooter = ({
   isSavingToDb,
   onSave,
 }: FooterProps) => {
-  const t = useTranslations(
-    kind === "resume" ? "Form.navigation" : "FormLetter.navigation"
-  );
+  const t = useTranslations(i18n.navigation);
   const isLastStep = currentStep === steps.at(-1)?.key;
 
   const previousStep = steps.find(
@@ -77,9 +75,7 @@ export const EditorFooter = ({
             >
               <Save className="h-4 w-4" />
               <span className="hidden sm:inline">
-                {isSavingToDb
-                  ? t("saving")
-                  : t(kind === "resume" ? "saveResume" : "saveLetter")}
+                {isSavingToDb ? t("saving") : t(i18n.saveLabel)}
               </span>
               <span className="sm:hidden">
                 {isSavingToDb ? t("saving") : t("save")}

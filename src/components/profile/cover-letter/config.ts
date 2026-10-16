@@ -56,4 +56,10 @@ export const letterConfig: DocumentConfig<"letter"> = {
     saveFailed: "letter.messages.saveFailed",
     saveSuccess: "letter.messages.saveSuccess",
   },
+  i18n: {
+    steps: "FormLetter.steps",
+    navigation: "FormLetter.navigation",
+    preview: "CoverLetterPage",
+    saveLabel: "saveLetter",
+  },
 };
