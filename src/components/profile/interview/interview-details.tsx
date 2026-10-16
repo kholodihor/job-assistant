@@ -29,7 +29,9 @@ export const InterviewDetails = ({
           <span className="text-muted-foreground">
             {t("liveInterview.experience")}:
           </span>
-          <span className="font-medium">{jobExperience} years</span>
+          <span className="font-medium">
+            {jobExperience} {t("liveInterview.years")}
+          </span>
         </div>
         <div className="flex justify-between">
           <span className="text-muted-foreground">

@@ -77,8 +77,8 @@ export const resumeConfig: DocumentConfig<"resume"> = {
       ? { ...prev, photo: saved.photo, publicId: saved.publicId }
       : prev,
   messages: {
-    loadFailed: "Failed to load resume data",
-    saveFailed: "Failed to save resume",
-    saveSuccess: "Resume saved successfully",
+    loadFailed: "resume.messages.loadFailed",
+    saveFailed: "resume.messages.saveFailed",
+    saveSuccess: "resume.messages.saveSuccess",
   },
 };

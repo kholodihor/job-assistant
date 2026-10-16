@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { DocumentConfig } from "@/components/profile/shared/document-config";
 import { useRouter } from "@/i18n/routing";
@@ -15,6 +16,7 @@ export const useDocumentDraft = <K extends DocumentKind>(
   const [isSaving, setIsSaving] = useState(false);
   const [isSavingToDb, setIsSavingToDb] = useState(false);
   const router = useRouter();
+  const t = useTranslations();
 
   // Load the existing document (edit mode) or the local draft (create mode)
   useEffect(() => {
@@ -46,14 +48,14 @@ export const useDocumentDraft = <K extends DocumentKind>(
       } catch (error) {
         if (controller.signal.aborted) return;
         console.error(`Error fetching ${config.label}:`, error);
-        toast.error(config.messages.loadFailed);
+        toast.error(t(config.messages.loadFailed));
       } finally {
         if (!controller.signal.aborted) setIsInitialized(true);
       }
     };
     fetchDocument();
     return () => controller.abort();
-  }, [documentId, config]);
+  }, [documentId, config, t]);
 
   // Update state and persist the draft to localStorage
   const updateData = useCallback(
@@ -79,7 +81,7 @@ export const useDocumentDraft = <K extends DocumentKind>(
       );
       if (missingFields.length > 0) {
         throw new Error(
-          `Please fill in all required fields (${missingFields.join(", ")})`
+          t("Common.requiredFieldsError", { fields: missingFields.join(", ") })
         );
       }
 
@@ -100,25 +102,25 @@ export const useDocumentDraft = <K extends DocumentKind>(
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.message || config.messages.saveFailed);
+        throw new Error(error.message || t(config.messages.saveFailed));
       }
 
       const saved = await response.json();
       // Merge Cloudinary info returned by the API
       setData((prev) => config.mergeSaved(prev, saved));
 
-      toast.success(config.messages.saveSuccess);
+      toast.success(t(config.messages.saveSuccess));
 
       if (!documentId) localStorage.removeItem(config.draftStorageKey);
       router.push(config.route);
     } catch (error) {
       toast.error(
-        error instanceof Error ? error.message : config.messages.saveFailed
+        error instanceof Error ? error.message : t(config.messages.saveFailed)
       );
     } finally {
       setIsSavingToDb(false);
     }
-  }, [data, router, documentId, config]);
+  }, [data, router, documentId, config, t]);
 
   return {
     data,

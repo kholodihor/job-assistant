@@ -10,12 +10,6 @@ const bubbleStyles: Record<ChatMessage["sender"], string> = {
   interviewer: "self-start bg-blue-50",
 };
 
-const senderLabels: Record<ChatMessage["sender"], string> = {
-  user: "You",
-  feedback: "AI Feedback",
-  interviewer: "Interviewer",
-};
-
 interface InterviewChatProps {
   messages: ChatMessage[];
   isGenerating: boolean;
@@ -26,6 +20,11 @@ export const InterviewChat = ({
   isGenerating,
 }: InterviewChatProps) => {
   const t = useTranslations("Interviewer");
+  const senderLabels: Record<ChatMessage["sender"], string> = {
+    user: t("liveInterview.senderYou"),
+    feedback: t("liveInterview.senderFeedback"),
+    interviewer: t("liveInterview.senderInterviewer"),
+  };
 
   return (
     <div className="max-h-[400px] flex-1 overflow-y-auto rounded-lg border bg-muted/10 p-4">

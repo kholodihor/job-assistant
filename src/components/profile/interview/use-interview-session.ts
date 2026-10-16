@@ -76,13 +76,9 @@ export function useInterviewSession(id: string) {
         setError(null);
 
         const response = await fetch(`/api/interviews/${id}`);
-        if (!response.ok) {
-          throw new Error(
-            response.status === 404
-              ? "Interview not found"
-              : "Failed to fetch interview"
-          );
-        }
+        // A 404 leaves `interview` null, which renders the not-found screen
+        if (response.status === 404) return;
+        if (!response.ok) throw new Error(`Request failed: ${response.status}`);
 
         const data: InterviewRecord = await response.json();
         if (cancelled) return;
@@ -107,9 +103,8 @@ export function useInterviewSession(id: string) {
       } catch (err) {
         console.error("Error fetching interview:", err);
         if (cancelled) return;
-        setError(
-          err instanceof Error ? err.message : "An unknown error occurred"
-        );
+        // Translation key, resolved where the error is rendered
+        setError("liveInterview.loadFailed");
       } finally {
         if (!cancelled) setIsLoading(false);
       }
@@ -195,7 +190,7 @@ export function useInterviewSession(id: string) {
       setMessages((prev) => [
         ...prev,
         {
-          text: `Score: ${feedback.score}/10\n\nStrengths: ${feedback.positives}\n\nAreas for Improvement: ${feedback.improvements}${feedback.technicalIssues ? `\n\nTechnical Notes: ${feedback.technicalIssues}` : ""}`,
+          text: `${t("liveInterview.feedbackScore")}: ${feedback.score}/10\n\n${t("liveInterview.feedbackStrengths")}: ${feedback.positives}\n\n${t("liveInterview.feedbackImprovements")}: ${feedback.improvements}${feedback.technicalIssues ? `\n\n${t("liveInterview.feedbackTechnicalNotes")}: ${feedback.technicalIssues}` : ""}`,
           sender: "feedback",
           feedback,
         },
@@ -207,7 +202,7 @@ export function useInterviewSession(id: string) {
       setMessages((prev) => [
         ...prev,
         {
-          text: "Sorry, I could not analyze your answer at this time.",
+          text: t("liveInterview.feedbackError"),
           sender: "feedback",
         },
       ]);

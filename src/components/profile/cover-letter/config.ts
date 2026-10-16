@@ -52,8 +52,8 @@ export const letterConfig: DocumentConfig<"letter"> = {
   mergeSaved: (prev, saved) =>
     saved.publicId ? { ...prev, publicId: saved.publicId } : prev,
   messages: {
-    loadFailed: "Failed to load letter data",
-    saveFailed: "Failed to save the letter",
-    saveSuccess: "Letter saved successfully",
+    loadFailed: "letter.messages.loadFailed",
+    saveFailed: "letter.messages.saveFailed",
+    saveSuccess: "letter.messages.saveSuccess",
   },
 };

@@ -48,7 +48,7 @@ export const LiveInterviewClient = ({ id }: { id: string }) => {
             ? "liveInterview.errorTitle"
             : "liveInterview.notFoundTitle"
         )}
-        description={session.error ?? t("liveInterview.notFoundDescription")}
+        description={t(session.error ?? "liveInterview.notFoundDescription")}
         actionLabel={t("liveInterview.returnButton")}
         onAction={backToList}
       />

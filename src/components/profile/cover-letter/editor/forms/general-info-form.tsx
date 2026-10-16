@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useLocale } from "next-intl";
+import { useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
 import {
   Form,
@@ -27,7 +27,7 @@ export const GeneralInfoForm = ({
   data: letterData,
   setData: setLetterData,
 }: EditorFormProps<LetterData>) => {
-  const locale = useLocale();
+  const t = useTranslations("FormLetter.generalInfo");
   const form = useForm<GeneralInfoFormValues>({
     resolver: zodResolver(generalInfoSchema),
     defaultValues: {
@@ -48,14 +48,8 @@ export const GeneralInfoForm = ({
   return (
     <div className="mx-auto w-full max-w-md space-y-6 p-6">
       <div className="space-y-2 text-center">
-        <h1 className="text-2xl font-semibold tracking-tight">
-          {locale === "en" ? "General Information" : "Загальна інформація"}
-        </h1>
-        <p className="text-sm text-muted-foreground">
-          {locale === "en"
-            ? "This information will be displayed on your resume."
-            : "Ця інформація буде відображена у вашому листі."}
-        </p>
+        <h1 className="text-2xl font-semibold tracking-tight">{t("title")}</h1>
+        <p className="text-sm text-muted-foreground">{t("description")}</p>
       </div>
 
       <Form {...form}>
@@ -65,14 +59,9 @@ export const GeneralInfoForm = ({
             name="title"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>
-                  {locale === "en" ? "Letter Title" : "Назва листа"}
-                </FormLabel>
+                <FormLabel>{t("titleLabel")}</FormLabel>
                 <FormControl>
-                  <Input
-                    placeholder={locale === "en" ? "My Letter" : "Мій лист"}
-                    {...field}
-                  />
+                  <Input placeholder={t("titlePlaceholder")} {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -84,17 +73,11 @@ export const GeneralInfoForm = ({
             name="template"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{locale === "en" ? "Template" : "Шаблон"}</FormLabel>
+                <FormLabel>{t("templateLabel")}</FormLabel>
                 <Select onValueChange={field.onChange} value={field.value}>
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue
-                        placeholder={
-                          locale === "en"
-                            ? "Select a template of the letter"
-                            : "Виберіть шаблон листа"
-                        }
-                      />
+                      <SelectValue placeholder={t("templatePlaceholder")} />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>

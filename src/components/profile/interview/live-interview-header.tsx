@@ -45,7 +45,9 @@ export const LiveInterviewHeader = ({
             <Clock className="h-4 w-4" />
             {formatTime(elapsedTime)}
           </Badge>
-          <Badge variant="secondary">Interview #{id}</Badge>
+          <Badge variant="secondary">
+            {t("liveInterview.interviewNumber", { id })}
+          </Badge>
         </div>
       </div>
     </CardHeader>

@@ -167,13 +167,15 @@
       "deleteSuccess": "Resume deleted successfully",
       "saveTitleSuccess": "Resume title updated successfully",
       "duplicateCreated": "Resume duplicated successfully",
-      "duplicateDeleted": "Duplicate resume deleted successfully",
-      "resumeDeleted": "Resume deleted successfully"
+      "loadFailed": "Failed to load resume data",
+      "saveFailed": "Failed to save resume",
+      "saveSuccess": "Resume saved successfully"
     },
     "errors": {
       "loadFailed": "Failed to load resumes",
       "deleteFailed": "Failed to delete resume",
-      "saveTitleFailed": "Failed to update resume title"
+      "saveTitleFailed": "Failed to update resume title",
+      "saveFailed": "Failed to save resume"
     }
   },
   "Form": {
@@ -206,9 +208,6 @@
     },
     "descriptions": {
       "skills": "Separate each skill with a comma",
-      "workExperience": "List your work experience in chronological order",
-      "education": "List your educational background in chronological order",
-      "languages": "Add languages you know and your proficiency level",
       "techStack": "Separate technologies with commas"
     },
     "navigation": {
@@ -302,30 +301,21 @@
       "languageLevel": "Select proficiency level",
       "degree": "Bachelor's degree",
       "institution": "University of New York",
-      "summary": "Write a brief summary of your professional background and goals",
       "techStack": "e.g. React, TypeScript, Node.js",
       "yearsOfExperience": "e.g. 3"
     },
     "workExperience": {
       "endDateDescription": "Leave end date empty if you are currently working here",
       "add": "Add work experience",
-      "remove": "Remove",
-      "drag": "Drag to reorder"
+      "remove": "Remove"
     },
     "education": {
       "add": "Add education",
-      "remove": "Remove",
-      "drag": "Drag to reorder"
+      "remove": "Remove"
     },
     "languages": {
       "add": "Add language",
-      "remove": "Remove",
-      "drag": "Drag to reorder"
-    },
-    "skills": {
-      "add": "Add skill",
-      "remove": "Remove",
-      "drag": "Drag to reorder"
+      "remove": "Remove"
     },
     "summary": {
       "generate": "Generate with AI",
@@ -338,6 +328,14 @@
     "buttons": {
       "cancel": "Cancel",
       "startInterview": "Start Interview"
+    },
+    "generalInfo": {
+      "title": "General Information",
+      "description": "This information will be displayed on your resume.",
+      "titleLabel": "Resume Title",
+      "titlePlaceholder": "My Resume",
+      "templateLabel": "Template",
+      "templatePlaceholder": "Select template"
     }
   },
   "Header": {
@@ -413,7 +411,7 @@
         "linkedin": "LinkedIn icon"
       }
     },
-    "copyright": "Baza Trainee Ukraine 2024 \u00A9 All rights reserved"
+    "copyright": "Baza Trainee Ukraine 2024 © All rights reserved"
   },
   "Settings": {
     "changeName": {
@@ -471,13 +469,15 @@
       "deleteSuccess": "Cover letter deleted successfully",
       "saveTitleSuccess": "Cover letter title updated successfully",
       "duplicateCreated": "Cover letter duplicated successfully",
-      "duplicateDeleted": "Duplicate cover letter deleted successfully",
-      "resumeDeleted": "Cover letter deleted successfully"
+      "loadFailed": "Failed to load letter data",
+      "saveFailed": "Failed to save the letter",
+      "saveSuccess": "Letter saved successfully"
     },
     "errors": {
-      "loadFailed": "Failed to load resumes",
+      "loadFailed": "Failed to load letters",
       "deleteFailed": "Failed to delete letter",
-      "saveTitleFailed": "Failed to update letter title"
+      "saveTitleFailed": "Failed to update letter title",
+      "saveFailed": "Failed to save letter"
     }
   },
   "Interviewer": {
@@ -527,8 +527,20 @@
       "errorTitle": "Error",
       "notFoundTitle": "Interview Not Found",
       "notFoundDescription": "The requested interview could not be found.",
-      "returnButton": "Return to Interviews"
-    }
+      "returnButton": "Return to Interviews",
+      "years": "years",
+      "interviewNumber": "Interview #{id}",
+      "senderYou": "You",
+      "senderFeedback": "AI Feedback",
+      "senderInterviewer": "Interviewer",
+      "feedbackError": "Sorry, I could not analyze your answer at this time.",
+      "feedbackScore": "Score",
+      "feedbackStrengths": "Strengths",
+      "feedbackImprovements": "Areas for Improvement",
+      "feedbackTechnicalNotes": "Technical Notes",
+      "loadFailed": "Failed to load the interview. Please try again."
+    },
+    "goLiveButton": "Go Live"
   },
   "FormLetter": {
     "validation": {
@@ -606,7 +618,25 @@
       "success": "Success",
       "successMessage": "Text generated successfully!",
       "error": "Error",
-      "errorMessage": "Failed to generate text. Please try again."
+      "errorMessage": "Failed to generate text. Please try again.",
+      "emptyResponse": "The AI returned an empty response. Please try again.",
+      "apiKeyError": "AI service is not configured",
+      "contactAdmin": "Please contact the administrator."
+    },
+    "generalInfo": {
+      "title": "General Information",
+      "description": "This information will be displayed on your cover letter.",
+      "titleLabel": "Letter Title",
+      "titlePlaceholder": "My Letter",
+      "templateLabel": "Template",
+      "templatePlaceholder": "Select a template of the letter"
+    },
+    "fields": {
+      "name": "Full Name",
+      "profession": "Profession",
+      "position": "Position",
+      "company": "Company",
+      "nameRecipient": "Name of the Recipient"
     }
   },
   "cvAnalyzer": {
@@ -682,6 +712,7 @@
     "confirm": "Confirm"
   },
   "Common": {
-    "loading": "Loading..."
+    "loading": "Loading...",
+    "requiredFieldsError": "Please fill in all required fields ({fields})"
   }
 }

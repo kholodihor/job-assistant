@@ -161,7 +161,6 @@
       "downloadPdf": "Завантажити PDF",
       "duplicate": "Дублювати",
       "delete": "Видалити",
-      "edit": "Редагувати",
       "cancel": "Скасувати",
       "save": "Зберегти"
     },
@@ -174,12 +173,16 @@
     "messages": {
       "deleteSuccess": "Резюме успішно видалено",
       "saveTitleSuccess": "Назву резюме успішно оновлено",
-      "duplicateCreated": "Копію резюме успішно створено"
+      "duplicateCreated": "Копію резюме успішно створено",
+      "loadFailed": "Не вдалося завантажити дані резюме",
+      "saveFailed": "Не вдалося зберегти резюме",
+      "saveSuccess": "Резюме успішно збережено"
     },
     "errors": {
       "loadFailed": "Не вдалося завантажити резюме",
       "deleteFailed": "Не вдалося видалити резюме",
-      "saveTitleFailed": "Не вдалося оновити назву резюме"
+      "saveTitleFailed": "Не вдалося оновити назву резюме",
+      "saveFailed": "Не вдалося зберегти резюме"
     }
   },
   "Form": {
@@ -204,7 +207,11 @@
       "descriptionRequired": "Опис обов'язковий",
       "languageNameRequired": "Назва мови обов'язкова",
       "languageLevelRequired": "Рівень володіння обов'язковий",
-      "yearsRequired": "Роки досвіду обов'язкові"
+      "yearsRequired": "Роки досвіду обов'язкові",
+      "professionRequired": "Професія обов'язкова",
+      "photoRequired": "Фото обов'язкове",
+      "locationRequired": "Місцезнаходження обов'язкове",
+      "phoneRequired": "Телефон обов'язковий"
     },
     "steps": {
       "generalInfo": {
@@ -301,28 +308,6 @@
       "add": "Додати освіту",
       "remove": "Видалити"
     },
-    "fields": {
-      "name": "Повне ім'я",
-      "profession": "Професія",
-      "photo": "Фото",
-      "location": "Місцезнаходження",
-      "phone": "Телефон",
-      "email": "Електронна пошта",
-      "telegram": "Telegram (Необов'язково)",
-      "github": "GitHub (Необов'язково)",
-      "behance": "Behance (Необов'язково)",
-      "dribbble": "Dribbble (Необов'язково)",
-      "adobePortfolio": "Adobe Portfolio (Необов'язково)",
-      "linkedin": "LinkedIn (Необов'язково)",
-      "position": "Посада",
-      "company": "Компанія",
-      "startDate": "Дата початку",
-      "endDate": "Дата закінчення",
-      "description": "Опис",
-      "workExperience": "Досвід роботи",
-      "degree": "Ступінь",
-      "institution": "Навчальний заклад"
-    },
     "languages": {
       "add": "Додати мову",
       "remove": "Видалити"
@@ -350,6 +335,14 @@
     "buttons": {
       "cancel": "Скасувати",
       "startInterview": "Почати співбесіду"
+    },
+    "generalInfo": {
+      "title": "Загальна інформація",
+      "description": "Ця інформація буде відображена на вашому резюме.",
+      "titleLabel": "Назва резюме",
+      "titlePlaceholder": "Моє резюме",
+      "templateLabel": "Шаблон",
+      "templatePlaceholder": "Виберіть шаблон"
     }
   },
   "Header": {
@@ -475,12 +468,16 @@
     "messages": {
       "deleteSuccess": "Лист успішно видалено",
       "saveTitleSuccess": "Назву листа успішно оновлено",
-      "duplicateCreated": "Копію листа успішно створено"
+      "duplicateCreated": "Копію листа успішно створено",
+      "loadFailed": "Не вдалося завантажити дані листа",
+      "saveFailed": "Не вдалося зберегти лист",
+      "saveSuccess": "Лист успішно збережено"
     },
     "errors": {
       "loadFailed": "Не вдалося завантажити супровідний лист",
       "deleteFailed": "Не вдалося видалити супровідний лист",
-      "saveTitleFailed": "Не вдалося оновити назву супровідного листа"
+      "saveTitleFailed": "Не вдалося оновити назву супровідного листа",
+      "saveFailed": "Не вдалося зберегти супровідний лист"
     }
   },
   "Interviewer": {
@@ -511,7 +508,22 @@
       "clearAnswer": "Очистити відповідь",
       "checkAnswer": "Перевірити відповідь",
       "generatingFeedback": "Генеруємо відгук...",
-      "feedbackReceived": "Відгук отримано"
+      "feedbackReceived": "Відгук отримано",
+      "years": "років",
+      "interviewNumber": "Інтерв'ю #{id}",
+      "senderYou": "Ви",
+      "senderFeedback": "Відгук ШІ",
+      "senderInterviewer": "Інтерв'юер",
+      "feedbackError": "Вибачте, наразі не вдалося проаналізувати вашу відповідь.",
+      "feedbackScore": "Оцінка",
+      "feedbackStrengths": "Сильні сторони",
+      "feedbackImprovements": "Зони для покращення",
+      "feedbackTechnicalNotes": "Технічні нотатки",
+      "errorTitle": "Помилка",
+      "notFoundTitle": "Інтерв'ю не знайдено",
+      "notFoundDescription": "Запитуване інтерв'ю не знайдено.",
+      "returnButton": "Повернутися до інтерв'ю",
+      "loadFailed": "Не вдалося завантажити інтерв'ю. Спробуйте ще раз."
     },
     "collapseButton": "Згорнути",
     "deleteButton": "Видалити",
@@ -527,7 +539,8 @@
     "noInterviewsMessage": "Ще не створено жодного інтерв'ю.",
     "getStartedMessage": "Натисніть кнопку \"Створити нове інтерв'ю\", щоб почати.",
     "rawResponseLabel": "Сира відповідь ШІ:",
-    "yearsExp": "років досвіду"
+    "yearsExp": "років досвіду",
+    "goLiveButton": "Почати інтерв'ю"
   },
   "FormLetter": {
     "validation": {
@@ -605,7 +618,25 @@
       "success": "Успішно",
       "successMessage": "Текст листа успішно згенеровано!",
       "error": "Помилка",
-      "errorMessage": "Не вдалося згенерувати текст листа. Будь ласка, спробуйте ще раз."
+      "errorMessage": "Не вдалося згенерувати текст листа. Будь ласка, спробуйте ще раз.",
+      "emptyResponse": "ШІ повернув порожню відповідь. Будь ласка, спробуйте ще раз.",
+      "apiKeyError": "Сервіс ШІ не налаштовано",
+      "contactAdmin": "Будь ласка, зверніться до адміністратора."
+    },
+    "generalInfo": {
+      "title": "Загальна інформація",
+      "description": "Ця інформація буде відображена у вашому листі.",
+      "titleLabel": "Назва листа",
+      "titlePlaceholder": "Мій лист",
+      "templateLabel": "Шаблон",
+      "templatePlaceholder": "Виберіть шаблон листа"
+    },
+    "fields": {
+      "name": "Повне ім'я",
+      "profession": "Професія",
+      "position": "Посада",
+      "company": "Компанія",
+      "nameRecipient": "Ім'я отримувача"
     }
   },
   "cvAnalyzer": {
@@ -681,6 +712,7 @@
     "confirm": "Підтвердити"
   },
   "Common": {
-    "loading": "Завантаження..."
+    "loading": "Завантаження...",
+    "requiredFieldsError": "Будь ласка, заповніть усі обов'язкові поля ({fields})"
   }
 }

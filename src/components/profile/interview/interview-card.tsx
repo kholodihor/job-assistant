@@ -90,7 +90,9 @@ export const InterviewCard = ({
                 size="sm"
                 className="flex items-center gap-1"
               >
-                <Link href={`/profile/interview/${interview.id}`}>Go Live</Link>
+                <Link href={`/profile/interview/${interview.id}`}>
+                  {t("goLiveButton")}
+                </Link>
               </Button>
             ) : (
               <Button
